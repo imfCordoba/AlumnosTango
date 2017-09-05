@@ -12,10 +12,10 @@ import com.madrefoca.alumnostango.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StudentsFragment extends Fragment {
+public class AttendeeTypesFragment extends Fragment {
 
 
-    public StudentsFragment() {
+    public AttendeeTypesFragment() {
         // Required empty public constructor
     }
 
@@ -24,7 +24,7 @@ public class StudentsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_students, container, false);
+        return inflater.inflate(R.layout.fragment_attendee_types, container, false);
     }
 
 }

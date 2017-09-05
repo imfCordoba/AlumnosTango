@@ -8,7 +8,7 @@
 
     <!-- Navigation Drawer menu labels -->
     <string name="nav_home">Inicio</string>
-    <string name="nav_students">Alumnos</string>
+    <string name="nav_attendees">Asistentes</string>
     <string name="nav_events">Clases</string>
     <string name="nav_payments">Pagos</string>
     <string name="nav_notifications">Notificaciones</string>
@@ -18,7 +18,7 @@
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
         <item>Inicio</item>
-        <item>Alumnos</item>
+        <item>Asistentes</item>
         <item>Clases</item>
         <item>Pagos</item>
         <item>Notificaciones</item>

@@ -18,12 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.madrefoca.alumnostango.R;
+import com.madrefoca.alumnostango.fragments.AttendeesFragment;
 import com.madrefoca.alumnostango.fragments.EventsFragment;
 import com.madrefoca.alumnostango.fragments.HomeFragment;
 import com.madrefoca.alumnostango.fragments.NotificationsFragment;
 import com.madrefoca.alumnostango.fragments.PaymentsFragment;
 import com.madrefoca.alumnostango.fragments.SettingsFragment;
-import com.madrefoca.alumnostango.fragments.StudentsFragment;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -153,8 +153,8 @@ public class MainActivity extends AppCompatActivity{
                 HomeFragment homeFragment = new HomeFragment();
                 return homeFragment;
             case 1:
-                StudentsFragment studentsFragment = new StudentsFragment();
-                return studentsFragment;
+                AttendeesFragment attendeesFragment = new AttendeesFragment();
+                return attendeesFragment;
             case 2:
                 EventsFragment eventsFragment = new EventsFragment();
                 return eventsFragment;
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity{
                         navItemIndex = 0;
                         CURRENT_TAG = TAG_HOME;
                         break;
-                    case R.id.nav_students:
+                    case R.id.nav_attendees:
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_STUDENTS;
                         break;
@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity{
 
         if (id == R.id.nav_home) {
 
-        } else if (id == R.id.nav_students) {
+        } else if (id == R.id.nav_attendees) {
 
         } else if (id == R.id.nav_event) {
 
