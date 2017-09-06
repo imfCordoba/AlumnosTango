@@ -52,6 +52,12 @@ public class Attendee {
         this.facebookLink = facebookLink;
     }
 
+    public Attendee(Integer dni, String name, Integer cellphoneNumber) {
+        this.dni = dni;
+        this.name = name;
+        this.cellphoneNumber = cellphoneNumber;
+    }
+
     public Integer getDni() {
         return dni;
     }

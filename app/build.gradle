@@ -31,14 +31,12 @@ dependencies {
     compile("com.j256.ormlite:ormlite-jdbc:${ormlite_version}")
     compile "com.j256.ormlite:ormlite-android:${ormlite_version}"
 
-
+    //Android Floating Action Button based on Material Design specification
+    //https://github.com/Clans/FloatingActionButton
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:appcompat-v7:26.0.1'
     compile 'com.android.support:design:26.0.1'
     compile 'com.android.support:support-v13:26.0.1'
-
-    //Android Floating Action Button based on Material Design specification
-    //https://github.com/Clans/FloatingActionButton
     compile 'com.github.clans:fab:1.6.4'
     testCompile 'junit:junit:4.12'
 }

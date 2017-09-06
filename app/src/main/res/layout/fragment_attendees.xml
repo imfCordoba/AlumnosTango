@@ -11,30 +11,27 @@
         android:layout_height="match_parent"
         android:text="Students fragment" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/listAttendees"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"/>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/menu_red"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true"
         fab:menu_backgroundColor="#ccffffff">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabNewAteendeeType"
+            android:id="@+id/fabAteendeeTypes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/fab_add"
-            fab:fab_label="Nuevo tipo de asistente"
+            fab:fab_label="Tipos de asistentes"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
