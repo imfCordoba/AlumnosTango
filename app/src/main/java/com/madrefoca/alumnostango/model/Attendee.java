@@ -9,8 +9,8 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "Attendees")
 public class Attendee {
 
-    @DatabaseField(id = true, canBeNull = false)
-    private Integer dni;
+    @DatabaseField(generatedId = true)
+    private Integer attendeeId;
 
     @DatabaseField(foreign = true, columnName = "idAttendeeType")
     private AttendeeType attendeeType;
@@ -40,9 +40,8 @@ public class Attendee {
 
     }
 
-    public Attendee(Integer dni, String name, String lastName, Integer age, String address,
+    public Attendee(String name, String lastName, Integer age, String address,
                     String level, Integer cellphoneNumber, String facebookLink) {
-        this.dni = dni;
         this.name = name;
         this.lastName = lastName;
         this.age = age;
@@ -52,18 +51,32 @@ public class Attendee {
         this.facebookLink = facebookLink;
     }
 
-    public Attendee(Integer dni, String name, Integer cellphoneNumber) {
-        this.dni = dni;
+    public Attendee(String name, String lastName, AttendeeType attendeeType, Integer cellphoneNumber) {
+        this.name = name;
+        this.lastName = lastName;
+        this.attendeeType = attendeeType;
+        this.cellphoneNumber = cellphoneNumber;
+    }
+
+    public Attendee(String name, Integer cellphoneNumber) {
         this.name = name;
         this.cellphoneNumber = cellphoneNumber;
     }
 
-    public Integer getDni() {
-        return dni;
+    public Integer getAttendeeId() {
+        return attendeeId;
     }
 
-    public void setDni(Integer dni) {
-        this.dni = dni;
+    public void setAttendeeId(Integer attendeeId) {
+        this.attendeeId = attendeeId;
+    }
+
+    public AttendeeType getAttendeeType() {
+        return attendeeType;
+    }
+
+    public void setAttendeeType(AttendeeType attendeeType) {
+        this.attendeeType = attendeeType;
     }
 
     public String getName() {

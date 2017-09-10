@@ -21,10 +21,10 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "AlumnosTango.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
-    private Dao<AttendeeType, Integer> attendeeTypesDao;
     private Dao<Attendee, Integer> attendeeDao;
+    private Dao<AttendeeType, Integer> attendeeTypesDao;
     //lo mismo para cada clase/tabla del modelo
 
     public DatabaseHelper(Context context) {
@@ -46,8 +46,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource) {
         try {
-            TableUtils.createTable(connectionSource, AttendeeType.class);
             TableUtils.createTable(connectionSource, Attendee.class);
+            TableUtils.createTable(connectionSource, AttendeeType.class);
             // TODO: 8/19/2017 lo mismo para los dao de las otras clases
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Unable to create databases", e);
@@ -85,6 +85,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public void clearTables() {
         try {
+            TableUtils.clearTable(connectionSource, AttendeeType.class);
             TableUtils.clearTable(connectionSource, Attendee.class);
             // TODO: 8/19/2017 lo mismo para los dao de las otras clases
         } catch (SQLException e) {
