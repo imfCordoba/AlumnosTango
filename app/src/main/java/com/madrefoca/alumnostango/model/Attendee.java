@@ -25,30 +25,26 @@ public class Attendee {
     private Integer age;
 
     @DatabaseField
-    private String address;
-
-    @DatabaseField
-    private String level;
-
-    @DatabaseField
     private Integer cellphoneNumber;
 
     @DatabaseField
-    private String facebookLink;
+    private String facebookProfile;
+
+    @DatabaseField
+    private String email;
 
     public Attendee() {
 
     }
 
-    public Attendee(String name, String lastName, Integer age, String address,
-                    String level, Integer cellphoneNumber, String facebookLink) {
+    public Attendee(String name, String lastName, Integer age, Integer cellphoneNumber,
+                    String facebookProfile, String email) {
         this.name = name;
         this.lastName = lastName;
         this.age = age;
-        this.address = address;
-        this.level = level;
         this.cellphoneNumber = cellphoneNumber;
-        this.facebookLink = facebookLink;
+        this.facebookProfile = facebookProfile;
+        this.email = email;
     }
 
     public Attendee(String name, String lastName, AttendeeType attendeeType, Integer cellphoneNumber) {
@@ -103,22 +99,6 @@ public class Attendee {
         this.age = age;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
     public Integer getCellphoneNumber() {
         return cellphoneNumber;
     }
@@ -127,11 +107,19 @@ public class Attendee {
         this.cellphoneNumber = cellphoneNumber;
     }
 
-    public String getFacebookLink() {
-        return facebookLink;
+    public String getFacebookProfile() {
+        return facebookProfile;
     }
 
-    public void setFacebookLink(String facebookLink) {
-        this.facebookLink = facebookLink;
+    public void setFacebookProfile(String facebookProfile) {
+        this.facebookProfile = facebookProfile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

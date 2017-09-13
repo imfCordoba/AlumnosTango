@@ -20,7 +20,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -49,10 +51,14 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
     private RecyclerView attendeesRecyclerView;
     private AlertDialog.Builder alertDialog;
     private EditText attendeeName;
+    private Spinner attendeeTypesSpinner;
     private int edit_position;
     private View view;
     private boolean add = false;
     private Paint p = new Paint();
+
+    //daos
+    Dao<AttendeeType, Integer> attendeeTypeDao;
 
 
     public AttendeesFragment() {
@@ -66,7 +72,12 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
         View thisFragment = inflater.inflate(R.layout.fragment_attendees, container, false);
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
-        databaseHelper.clearTables();
+        try {
+            attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //databaseHelper.clearTables();
 
         //Insert some students
         //DatabasePopulatorUtil databasePopulatorUtil = new DatabasePopulatorUtil(databaseHelper);
@@ -178,6 +189,9 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
         view = getLayoutInflater().inflate(R.layout.dialog_layout,null);
         alertDialog.setView(view);
         attendeeName = (EditText)view.findViewById(R.id.dialog_attendee_name);
+
+        this.populateAttendeeTypesSpinner(view);
+
         alertDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -185,13 +199,12 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
                     add =false;
                     Attendee attende = new Attendee();
                     // TODO: 09/09/17 traer el verdadero type desde el dialogo
-                    AttendeeType attendeeType = new AttendeeType();
+                    AttendeeType attendeeType;
 
                     try {
-                        Dao<AttendeeType, Integer> attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
-                        attendeeType = attendeeTypeDao.queryForEq("name", "alumno").get(0);
+                        String attendeType = attendeeTypesSpinner.getSelectedView().toString();
+                        attendeeType = attendeeTypeDao.queryForEq("name", attendeType).get(0);
 
-                        Attendee attendee = new Attendee();
                         attende.setName(attendeeName.getText().toString());
                         attende.setAttendeeType(attendeeType);
                         // TODO: 09/09/17 agregar el apellido desde el dialogo
@@ -218,6 +231,28 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
 
             }
         });
+    }
+
+    private void populateAttendeeTypesSpinner(View view) {
+        attendeeTypesSpinner = (Spinner) view.findViewById(R.id.dialog_attendee_type_spinner);
+        //get attendees types to put into spinner
+
+        List<AttendeeType> attendeesTpesList = null;
+        try {
+            attendeesTpesList = attendeeTypeDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        List<String> list = new ArrayList<String>();
+        for(AttendeeType attendeeType : attendeesTpesList){
+            list.add(attendeeType.getName());
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(view.getContext(),
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        attendeeTypesSpinner.setAdapter(dataAdapter);
     }
 
     private List<Attendee> getAllAttendeeFromDatabase() {
