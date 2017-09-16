@@ -21,7 +21,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "AlumnosTango.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 1;
 
     private Dao<Attendee, Integer> attendeeDao;
     private Dao<AttendeeType, Integer> attendeeTypesDao;
