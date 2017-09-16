@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.model.Attendee;
+import com.madrefoca.alumnostango.model.AttendeeType;
 
 import java.util.ArrayList;
 
@@ -16,49 +17,49 @@ import java.util.ArrayList;
  * Created by fernando on 09/09/17.
  */
 
-public class DataAdapter extends RecyclerView.Adapter{
+public class AttendeeTypesDataAdapter extends RecyclerView.Adapter{
 
-    private ArrayList<Attendee> attendeesList;
+    private ArrayList<AttendeeType> attendeeTypesList;
 
-    public DataAdapter(ArrayList attendeesList) {
-        this.attendeesList = attendeesList;
+    public AttendeeTypesDataAdapter(ArrayList attendeeTypesList) {
+        this.attendeeTypesList = attendeeTypesList;
     }
 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_layout, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.attendee_type_row_layout, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder)holder;
-        viewHolder.attendeeName.setText(attendeesList.get(position).getName() +" "+ attendeesList.get(position).getLastName());
+        viewHolder.attendeeTypeName.setText(attendeeTypesList.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return attendeesList.size();
+        return attendeeTypesList.size();
     }
 
-    public void addItem(Attendee attendee) {
-        attendeesList.add(attendee);
-        notifyItemInserted(attendeesList.size());
+    public void addItem(AttendeeType attendeeType) {
+        attendeeTypesList.add(attendeeType);
+        notifyItemInserted(attendeeTypesList.size());
     }
 
     public void removeItem(int position) {
-        attendeesList.remove(position);
+        attendeeTypesList.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, attendeesList.size());
+        notifyItemRangeChanged(position, attendeeTypesList.size());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView attendeeName;
+        TextView attendeeTypeName;
         public ViewHolder(View view) {
             super(view);
 
-            attendeeName = (TextView)view.findViewById(R.id.attendee_name);
+            attendeeTypeName = (TextView)view.findViewById(R.id.attendee_type_name);
         }
     }
 }
