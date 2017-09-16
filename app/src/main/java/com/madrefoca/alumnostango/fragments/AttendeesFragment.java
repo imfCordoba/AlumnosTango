@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +29,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
-import com.madrefoca.alumnostango.adapters.DataAdapter;
+import com.madrefoca.alumnostango.adapters.AttendeesDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeType;
@@ -49,8 +48,8 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
 
     private ArrayList<Attendee> attendeesList =  new ArrayList<>();
     private DatabaseHelper databaseHelper = null;
-    private DataAdapter attendeesListAdapter;
-    private AlertDialog.Builder alertDialog;
+    private AttendeesDataAdapter attendeesListAdapter;
+    private AlertDialog.Builder addEditAttendeeDialog;
     private int edit_position;
     private View view;
     private boolean add = false;
@@ -148,7 +147,7 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
         attendeesRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
         attendeesRecyclerView.setLayoutManager(layoutManager);
-        attendeesListAdapter = new DataAdapter(attendeesList);
+        attendeesListAdapter = new AttendeesDataAdapter(attendeesList);
         attendeesRecyclerView.setAdapter(attendeesListAdapter);
 
     }
@@ -185,7 +184,7 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
                 } else {
                     removeView();
                     edit_position = position;
-                    alertDialog.setTitle("Editar alumno");
+                    addEditAttendeeDialog.setTitle("Editar alumno");
                     attendeeId.setText(attendeesList.get(position).getAttendeeId().toString());
                     attendeeName.setText(attendeesList.get(position).getName());
                     attendeeLastName.setText(attendeesList.get(position).getLastName());
@@ -197,7 +196,7 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
                     attendeeEmail.setText(attendeesList.get(position).getEmail());
                     attendeeTypesSpinner.setSelection(dataAdapter.getPosition(attendeesList.get(position).getAttendeeType().getName()));
 
-                    alertDialog.show();
+                    addEditAttendeeDialog.show();
                 }
             }
 
@@ -247,16 +246,16 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initDialog(View thisFragment){
-        alertDialog = new AlertDialog.Builder(thisFragment.getContext());
-        view = getLayoutInflater().inflate(R.layout.dialog_layout,null);
+        addEditAttendeeDialog = new AlertDialog.Builder(thisFragment.getContext());
+        view = getLayoutInflater().inflate(R.layout.dialog_attendees,null);
 
         ButterKnife.bind(this, view);
 
-        alertDialog.setView(view);
+        addEditAttendeeDialog.setView(view);
 
         this.populateAttendeeTypesSpinner(view);
 
-        alertDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+        addEditAttendeeDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 AttendeeType attendeeType = new AttendeeType();
@@ -358,7 +357,7 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
                 removeView();
                 add = true;
 
-                alertDialog.setTitle("Nuevo alumno");
+                addEditAttendeeDialog.setTitle("Nuevo alumno");
 
                 attendeeName.setText("");
                 attendeeLastName.setText("");
@@ -368,7 +367,7 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
                 attendeeEmail.setText("");
                 attendeeTypesSpinner.setSelection(1);
 
-                alertDialog.show();
+                addEditAttendeeDialog.show();
                 break;
             case R.id.fabAteendeeTypes:
                 AttendeeTypesFragment attendeeTypesFragment= new AttendeeTypesFragment();
