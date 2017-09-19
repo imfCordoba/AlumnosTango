@@ -10,6 +10,7 @@
     <string name="nav_home">Inicio</string>
     <string name="nav_attendees">Asistentes</string>
     <string name="nav_events">Clases</string>
+    <string name="nav_places">Lugares</string>
     <string name="nav_payments">Pagos</string>
     <string name="nav_notifications">Notificaciones</string>
     <string name="nav_configurations">Configuraciones</string>
@@ -20,6 +21,7 @@
         <item>Inicio</item>
         <item>Asistentes</item>
         <item>Clases</item>
+        <item>Lugares</item>
         <item>Pagos</item>
         <item>Notificaciones</item>
         <item>Configuraciones</item>

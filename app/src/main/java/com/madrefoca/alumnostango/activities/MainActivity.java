@@ -23,7 +23,9 @@ import com.madrefoca.alumnostango.fragments.EventsFragment;
 import com.madrefoca.alumnostango.fragments.HomeFragment;
 import com.madrefoca.alumnostango.fragments.NotificationsFragment;
 import com.madrefoca.alumnostango.fragments.PaymentsFragment;
+import com.madrefoca.alumnostango.fragments.PlacesFragment;
 import com.madrefoca.alumnostango.fragments.SettingsFragment;
+import com.madrefoca.alumnostango.model.Place;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity{
     private static final String TAG_HOME = "home";
     private static final String TAG_STUDENTS = "students";
     private static final String TAG_EVENTS = "events";
+    private static final String TAG_PLACES = "places";
     private static final String TAG_PAYMENTS = "payments";
     private static final String TAG_NOTIFICATIONS= "notifications";
     private static final String TAG_SETTINGS = "settings";
@@ -159,12 +162,15 @@ public class MainActivity extends AppCompatActivity{
                 EventsFragment eventsFragment = new EventsFragment();
                 return eventsFragment;
             case 3:
+                PlacesFragment placesFragment = new PlacesFragment();
+                return placesFragment;
+            case 4:
                 PaymentsFragment paymentsFragment = new PaymentsFragment();
                 return paymentsFragment;
-            case 4:
+            case 5:
                 NotificationsFragment notificationsFragment = new NotificationsFragment();
                 return notificationsFragment;
-            case 5:
+            case 6:
                 SettingsFragment settingsFragment = new SettingsFragment();
                 return settingsFragment;
             default:
@@ -199,20 +205,24 @@ public class MainActivity extends AppCompatActivity{
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_STUDENTS;
                         break;
-                    case R.id.nav_event:
+                    case R.id.nav_events:
                         navItemIndex = 2;
                         CURRENT_TAG = TAG_EVENTS;
                         break;
-                    case R.id.nav_payments:
+                    case R.id.nav_places:
                         navItemIndex = 3;
+                        CURRENT_TAG = TAG_PLACES;
+                        break;
+                    case R.id.nav_payments:
+                        navItemIndex = 4;
                         CURRENT_TAG = TAG_PAYMENTS;
                         break;
                     case R.id.nav_notification:
-                        navItemIndex = 4;
+                        navItemIndex = 5;
                         CURRENT_TAG = TAG_NOTIFICATIONS;
                         break;
                     case R.id.nav_settings:
-                        navItemIndex = 5;
+                        navItemIndex = 6;
                         CURRENT_TAG = TAG_SETTINGS;
                         break;
 
@@ -314,7 +324,7 @@ public class MainActivity extends AppCompatActivity{
 
         } else if (id == R.id.nav_attendees) {
 
-        } else if (id == R.id.nav_event) {
+        } else if (id == R.id.nav_events) {
 
         } else if (id == R.id.nav_payments) {
 

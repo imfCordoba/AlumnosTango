@@ -25,9 +25,9 @@ import com.github.clans.fab.FloatingActionButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
-import com.madrefoca.alumnostango.adapters.AttendeeTypesDataAdapter;
+import com.madrefoca.alumnostango.adapters.EventTypesDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
-import com.madrefoca.alumnostango.model.AttendeeType;
+import com.madrefoca.alumnostango.model.EventType;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,58 +41,59 @@ import butterknife.Optional;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AttendeeTypesFragment extends Fragment {
+public class EventTypesFragment extends Fragment {
 
     private DatabaseHelper databaseHelper = null;
     private View view;
-    private AlertDialog.Builder addEditAttendeeTypeDialog;
+    private AlertDialog.Builder addEditEventTypesDialog;
     private boolean add = false;
-    private ArrayList<AttendeeType> attendeeTypesList =  new ArrayList<>();
-    private AttendeeTypesDataAdapter attendeeTypesListAdapter;
+    private ArrayList<EventType> eventTypesList =  new ArrayList<>();
+    private EventTypesDataAdapter eventTypesListAdapter;
     private int edit_position;
     private Paint p = new Paint();
 
     @Nullable
-    @BindView(R.id.fabAddNewAteendeeType)
-    FloatingActionButton fabAddNewAttendeeType;
+    @BindView(R.id.fabAddNewEventType)
+    FloatingActionButton fabAddNewEventType;
 
     @Nullable
-    @BindView(R.id.attendeeTypesRecyclerView)
-    RecyclerView attendeeTypesRecyclerView;
+    @BindView(R.id.eventTypesRecyclerView)
+    RecyclerView eventTypesRecyclerView;
 
     @Nullable
-    @BindView(R.id.dialog_attendee_type_name)
-    EditText attendeeTypeName;
+    @BindView(R.id.dialog_event_type_name)
+    EditText eventTypeName;
 
     @Nullable
-    @BindView(R.id.dialog_attendee_type_id)
-    EditText attendeeTypeid;
+    @BindView(R.id.dialog_event_type_id)
+    EditText eventTypeid;
 
-    //daos
-    Dao<AttendeeType, Integer> attendeeTypeDao;
 
-    public AttendeeTypesFragment() {
+    public EventTypesFragment() {
         // Required empty public constructor
     }
+
+    //daos
+    Dao<EventType, Integer> eventTypeDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View thisFragment = inflater.inflate(R.layout.fragment_attendee_types, container, false);
+        View thisFragment = inflater.inflate(R.layout.fragment_event_types, container, false);
 
         ButterKnife.bind(this, thisFragment);
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 
         try {
-            attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
+            eventTypeDao = databaseHelper.getEventTypesDao();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         this.initViews(thisFragment);
         //populate list
-        this.populateAttendeeTypesList();
+        this.populateEventTypesList();
         this.initSwipe();
         this.initDialog(thisFragment);
 
@@ -100,18 +101,18 @@ public class AttendeeTypesFragment extends Fragment {
         return thisFragment;
     }
 
-    private void populateAttendeeTypesList(){
-        Log.d("AttendeeTypesFragment: ", "put the AttendeeTypes in the view...");
-        attendeeTypesList.addAll(getAllAttendeeTypesFromDatabase());
-        attendeeTypesListAdapter.notifyDataSetChanged();
+    private void populateEventTypesList(){
+        Log.d("EventTypesFragment: ", "put the Event types in the view...");
+        eventTypesList.addAll(getAllEventTypesFromDatabase());
+        eventTypesListAdapter.notifyDataSetChanged();
     }
 
     private void initViews(View thisFragment) {
-        attendeeTypesRecyclerView.setHasFixedSize(true);
+        eventTypesRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
-        attendeeTypesRecyclerView.setLayoutManager(layoutManager);
-        attendeeTypesListAdapter = new AttendeeTypesDataAdapter(attendeeTypesList);
-        attendeeTypesRecyclerView.setAdapter(attendeeTypesListAdapter);
+        eventTypesRecyclerView.setLayoutManager(layoutManager);
+        eventTypesListAdapter = new EventTypesDataAdapter(eventTypesList);
+        eventTypesRecyclerView.setAdapter(eventTypesListAdapter);
     }
 
     private void initSwipe() {
@@ -129,20 +130,20 @@ public class AttendeeTypesFragment extends Fragment {
 
                 if (direction == ItemTouchHelper.LEFT){
                     try {
-                        attendeeTypeDao.deleteById(attendeeTypesList.get(position).getIdAttendeeType());
-                        Log.d("AttendeeFragment: ", "Attendee type: " + attendeeTypesList.get(position).getName() + ", with id: " +
-                                attendeeTypesList.get(position).getIdAttendeeType() + " was deleted from database.");
+                        eventTypeDao.deleteById(eventTypesList.get(position).getIdEventType());
+                        Log.d("EventFragment: ", "Event type: " + eventTypesList.get(position).getName() + ", with id: " +
+                                eventTypesList.get(position).getIdEventType() + " was deleted from database.");
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    attendeeTypesListAdapter.removeItem(position);
+                    eventTypesListAdapter.removeItem(position);
                 } else {
                     removeView();
                     edit_position = position;
-                    addEditAttendeeTypeDialog.setTitle("Editar tipo de asistente");
-                    attendeeTypeid.setText(attendeeTypesList.get(position).getIdAttendeeType().toString());
-                    attendeeTypeName.setText(attendeeTypesList.get(position).getName());
-                    addEditAttendeeTypeDialog.show();
+                    addEditEventTypesDialog.setTitle("Editar tipo de evento");
+                    eventTypeid.setText(eventTypesList.get(position).getIdEventType().toString());
+                    eventTypeName.setText(eventTypesList.get(position).getName());
+                    addEditEventTypesDialog.show();
                 }
             }
 
@@ -182,73 +183,73 @@ public class AttendeeTypesFragment extends Fragment {
 
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(attendeeTypesRecyclerView);
+        itemTouchHelper.attachToRecyclerView(eventTypesRecyclerView);
     }
 
     private void initDialog(View thisFragment) {
-        addEditAttendeeTypeDialog = new AlertDialog.Builder(thisFragment.getContext());
-        view = getLayoutInflater().inflate(R.layout.dialog_attendee_types,null);
+        addEditEventTypesDialog = new AlertDialog.Builder(thisFragment.getContext());
+        view = getLayoutInflater().inflate(R.layout.dialog_event_types,null);
         ButterKnife.bind(this, view);
-        addEditAttendeeTypeDialog.setView(view);
+        addEditEventTypesDialog.setView(view);
 
-        addEditAttendeeTypeDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+        addEditEventTypesDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                AttendeeType attendeeType = null;
+                EventType eventType = null;
                 try {
                     if(add){
                         add =false;
                         //getting data from dialog
-                        attendeeType = new AttendeeType();
-                        attendeeType.setName(attendeeTypeName.getText().toString());
-                        attendeeTypeDao.create(attendeeType);
-                        Log.d("AttendeeTypeFragment: ", "Saved attendee type : " + attendeeType.getName());
+                        eventType = new EventType();
+                        eventType.setName(eventTypeName.getText().toString());
+                        eventTypeDao.create(eventType);
+                        Log.d("EventTypeFragment: ", "Saved event type : " + eventType.getName());
                     }else{
-                        attendeeType = attendeeTypeDao.queryForId(Integer.parseInt(attendeeTypeid.getText().toString()));
-                        attendeeType.setName(attendeeTypeName.getText().toString());
-                        attendeeTypeDao.update(attendeeType);
-                        Log.d("AttendeeTypeFragment: ", "Updated attendee type: " + attendeeType.getName());
+                        eventType = eventTypeDao.queryForId(Integer.parseInt(eventTypeid.getText().toString()));
+                        eventType.setName(eventTypeName.getText().toString());
+                        eventTypeDao.update(eventType);
+                        Log.d("EventTypeFragment: ", "Updated event type: " + eventType.getName());
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
-                attendeeTypesList.clear();
-                attendeeTypesList.addAll(getAllAttendeeTypesFromDatabase());
-                attendeeTypesListAdapter.notifyDataSetChanged();
+                eventTypesList.clear();
+                eventTypesList.addAll(getAllEventTypesFromDatabase());
+                eventTypesListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         });
     }
 
     @Optional
-    @OnClick(R.id.fabAddNewAteendeeType)
-    public void onClickAddNewAttendeeType() {
+    @OnClick(R.id.fabAddNewEventType)
+    public void onClickAddNewEventType() {
         removeView();
         add = true;
-        addEditAttendeeTypeDialog.setTitle("Nuevo tipo de asistente");
-        attendeeTypeName.setText("");
-        addEditAttendeeTypeDialog.show();
+        addEditEventTypesDialog.setTitle("Nuevo tipo de evento");
+        eventTypeName.setText("");
+        addEditEventTypesDialog.show();
 
-        /*AddAttendeesTypesFragment addAttendeesTypesFragment= new AddAttendeesTypesFragment();
+        /*AddEventsTypesFragment addEventsTypesFragment= new AddEventsTypesFragment();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame, addAttendeesTypesFragment, "nav_addAttendeesTypes");
+        fragmentTransaction.replace(R.id.frame, addEventsTypesFragment, "nav_addEventsTypes");
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();*/
     }
 
-    private List<AttendeeType> getAllAttendeeTypesFromDatabase() {
-        // Reading all AttendeeTypes
-        Log.d("AttendeeTypesFragment: ", "Reading all AttendeeTypes from database...");
-        List<AttendeeType> attendeeTypeList = null;
+    private List<EventType> getAllEventTypesFromDatabase() {
+        // Reading all EventTypes
+        Log.d("EventTypesFragment: ", "Reading all EventTypes from database...");
+        List<EventType> eventTypeList = null;
         try {
             // This is how, a reference of DAO object can be done
-            attendeeTypeList = attendeeTypeDao.queryForAll();
+            eventTypeList = eventTypeDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return attendeeTypeList;
+        return eventTypeList;
     }
 
     private void removeView(){
@@ -256,4 +257,5 @@ public class AttendeeTypesFragment extends Fragment {
             ((ViewGroup) view.getParent()).removeView(view);
         }
     }
+
 }

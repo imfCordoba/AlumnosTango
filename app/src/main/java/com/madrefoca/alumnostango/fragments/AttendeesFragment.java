@@ -57,7 +57,7 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
     private ArrayAdapter<String> dataAdapter;
 
     @Nullable
-    @BindView(R.id.fabAteendeeTypes)
+    @BindView(R.id.fabAttendeeTypes)
     FloatingActionButton fabAttendeeType;
 
     @Nullable
@@ -369,7 +369,7 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
 
                 addEditAttendeeDialog.show();
                 break;
-            case R.id.fabAteendeeTypes:
+            case R.id.fabAttendeeTypes:
                 AttendeeTypesFragment attendeeTypesFragment= new AttendeeTypesFragment();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

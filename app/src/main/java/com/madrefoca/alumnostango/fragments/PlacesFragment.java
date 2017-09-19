@@ -11,6 +11,8 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,15 +21,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
-import com.madrefoca.alumnostango.adapters.AttendeeTypesDataAdapter;
+import com.madrefoca.alumnostango.adapters.PlacesDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
-import com.madrefoca.alumnostango.model.AttendeeType;
+import com.madrefoca.alumnostango.model.Place;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,83 +38,104 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Optional;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AttendeeTypesFragment extends Fragment {
+public class PlacesFragment extends Fragment implements View.OnClickListener {
 
+
+    private ArrayList<Place> placesList =  new ArrayList<>();
     private DatabaseHelper databaseHelper = null;
-    private View view;
-    private AlertDialog.Builder addEditAttendeeTypeDialog;
-    private boolean add = false;
-    private ArrayList<AttendeeType> attendeeTypesList =  new ArrayList<>();
-    private AttendeeTypesDataAdapter attendeeTypesListAdapter;
+    private PlacesDataAdapter placesListAdapter;
+    private AlertDialog.Builder addEditPlaceDialog;
     private int edit_position;
+    private View view;
+    private boolean add = false;
     private Paint p = new Paint();
+    private ArrayAdapter<String> dataAdapter;
+
 
     @Nullable
-    @BindView(R.id.fabAddNewAteendeeType)
-    FloatingActionButton fabAddNewAttendeeType;
+    @BindView(R.id.fabAddNewPlace)
+    FloatingActionButton fabAddPlace;
 
     @Nullable
-    @BindView(R.id.attendeeTypesRecyclerView)
-    RecyclerView attendeeTypesRecyclerView;
+    @BindView(R.id.placesRecyclerView)
+    RecyclerView placesRecyclerView;
 
     @Nullable
-    @BindView(R.id.dialog_attendee_type_name)
-    EditText attendeeTypeName;
+    @BindView(R.id.dialog_place_id)
+    EditText placeId;
 
     @Nullable
-    @BindView(R.id.dialog_attendee_type_id)
-    EditText attendeeTypeid;
+    @BindView(R.id.dialog_place_name)
+    EditText placeName;
+
+    @Nullable
+    @BindView(R.id.dialog_place_address)
+    EditText placeAddress;
+
+    @Nullable
+    @BindView(R.id.dialog_place_phone)
+    EditText placePhone;
+
+    @Nullable
+    @BindView(R.id.dialog_place_facebook)
+    EditText placeFacebook;
+
+    @Nullable
+    @BindView(R.id.dialog_place_email)
+    EditText placeEmail;
+
 
     //daos
-    Dao<AttendeeType, Integer> attendeeTypeDao;
+    Dao<Place, Integer> placeDao;
 
-    public AttendeeTypesFragment() {
+
+    public PlacesFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View thisFragment = inflater.inflate(R.layout.fragment_attendee_types, container, false);
+        View thisFragment = inflater.inflate(R.layout.fragment_places, container, false);
 
         ButterKnife.bind(this, thisFragment);
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 
         try {
-            attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
+            placeDao = databaseHelper.getPlacesDao();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         this.initViews(thisFragment);
-        //populate list
-        this.populateAttendeeTypesList();
+
+        this.populatePlacesList();
         this.initSwipe();
         this.initDialog(thisFragment);
-
         // Inflate the layout for this fragment
         return thisFragment;
     }
 
-    private void populateAttendeeTypesList(){
-        Log.d("AttendeeTypesFragment: ", "put the AttendeeTypes in the view...");
-        attendeeTypesList.addAll(getAllAttendeeTypesFromDatabase());
-        attendeeTypesListAdapter.notifyDataSetChanged();
+    private void initViews(View thisFragment) {
+        fabAddPlace.setOnClickListener(this);
+        placesRecyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
+        placesRecyclerView.setLayoutManager(layoutManager);
+        placesListAdapter = new PlacesDataAdapter(placesList);
+        placesRecyclerView.setAdapter(placesListAdapter);
+
     }
 
-    private void initViews(View thisFragment) {
-        attendeeTypesRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
-        attendeeTypesRecyclerView.setLayoutManager(layoutManager);
-        attendeeTypesListAdapter = new AttendeeTypesDataAdapter(attendeeTypesList);
-        attendeeTypesRecyclerView.setAdapter(attendeeTypesListAdapter);
+    private void populatePlacesList() {
+        Log.d("PlaceFragment: ", "put the Places in the view...");
+        placesList.addAll(getAllPlaceFromDatabase());
+        placesListAdapter.notifyDataSetChanged();
     }
 
     private void initSwipe() {
@@ -129,20 +153,26 @@ public class AttendeeTypesFragment extends Fragment {
 
                 if (direction == ItemTouchHelper.LEFT){
                     try {
-                        attendeeTypeDao.deleteById(attendeeTypesList.get(position).getIdAttendeeType());
-                        Log.d("AttendeeFragment: ", "Attendee type: " + attendeeTypesList.get(position).getName() + ", with id: " +
-                                attendeeTypesList.get(position).getIdAttendeeType() + " was deleted from database.");
+                        placeDao.deleteById(placesList.get(position).getIdplace());
+                        Log.d("PlaceFragment: ", "Place: " + placesList.get(position).getName() + ", with id: " +
+                                placesList.get(position).getIdplace() + " was deleted from database.");
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    attendeeTypesListAdapter.removeItem(position);
+                    placesListAdapter.removeItem(position);
                 } else {
                     removeView();
                     edit_position = position;
-                    addEditAttendeeTypeDialog.setTitle("Editar tipo de asistente");
-                    attendeeTypeid.setText(attendeeTypesList.get(position).getIdAttendeeType().toString());
-                    attendeeTypeName.setText(attendeeTypesList.get(position).getName());
-                    addEditAttendeeTypeDialog.show();
+                    addEditPlaceDialog.setTitle("Editar lugar");
+                    placeId.setText(placesList.get(position).getIdplace().toString());
+                    placeName.setText(placesList.get(position).getName());
+                    placeAddress.setText(placesList.get(position).getAddress());
+                    if(placesList.get(position).getPhone() != null)
+                        placePhone.setText(placesList.get(position).getPhone().toString());
+                    placeFacebook.setText(placesList.get(position).getFacebookLink().toString());
+                    placeEmail.setText(placesList.get(position).getEmail().toString());
+
+                    addEditPlaceDialog.show();
                 }
             }
 
@@ -182,78 +212,94 @@ public class AttendeeTypesFragment extends Fragment {
 
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(attendeeTypesRecyclerView);
-    }
-
-    private void initDialog(View thisFragment) {
-        addEditAttendeeTypeDialog = new AlertDialog.Builder(thisFragment.getContext());
-        view = getLayoutInflater().inflate(R.layout.dialog_attendee_types,null);
-        ButterKnife.bind(this, view);
-        addEditAttendeeTypeDialog.setView(view);
-
-        addEditAttendeeTypeDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AttendeeType attendeeType = null;
-                try {
-                    if(add){
-                        add =false;
-                        //getting data from dialog
-                        attendeeType = new AttendeeType();
-                        attendeeType.setName(attendeeTypeName.getText().toString());
-                        attendeeTypeDao.create(attendeeType);
-                        Log.d("AttendeeTypeFragment: ", "Saved attendee type : " + attendeeType.getName());
-                    }else{
-                        attendeeType = attendeeTypeDao.queryForId(Integer.parseInt(attendeeTypeid.getText().toString()));
-                        attendeeType.setName(attendeeTypeName.getText().toString());
-                        attendeeTypeDao.update(attendeeType);
-                        Log.d("AttendeeTypeFragment: ", "Updated attendee type: " + attendeeType.getName());
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-                attendeeTypesList.clear();
-                attendeeTypesList.addAll(getAllAttendeeTypesFromDatabase());
-                attendeeTypesListAdapter.notifyDataSetChanged();
-                dialog.dismiss();
-            }
-        });
-    }
-
-    @Optional
-    @OnClick(R.id.fabAddNewAteendeeType)
-    public void onClickAddNewAttendeeType() {
-        removeView();
-        add = true;
-        addEditAttendeeTypeDialog.setTitle("Nuevo tipo de asistente");
-        attendeeTypeName.setText("");
-        addEditAttendeeTypeDialog.show();
-
-        /*AddAttendeesTypesFragment addAttendeesTypesFragment= new AddAttendeesTypesFragment();
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame, addAttendeesTypesFragment, "nav_addAttendeesTypes");
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();*/
-    }
-
-    private List<AttendeeType> getAllAttendeeTypesFromDatabase() {
-        // Reading all AttendeeTypes
-        Log.d("AttendeeTypesFragment: ", "Reading all AttendeeTypes from database...");
-        List<AttendeeType> attendeeTypeList = null;
-        try {
-            // This is how, a reference of DAO object can be done
-            attendeeTypeList = attendeeTypeDao.queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return attendeeTypeList;
+        itemTouchHelper.attachToRecyclerView(placesRecyclerView);
     }
 
     private void removeView(){
         if(view.getParent()!=null) {
             ((ViewGroup) view.getParent()).removeView(view);
+        }
+    }
+
+    private void initDialog(View thisFragment){
+        addEditPlaceDialog = new AlertDialog.Builder(thisFragment.getContext());
+        view = getLayoutInflater().inflate(R.layout.dialog_places,null);
+
+        ButterKnife.bind(this, view);
+
+        addEditPlaceDialog.setView(view);
+
+        addEditPlaceDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Place place = null;
+
+                try {
+                    if(add){
+                        add =false;
+
+                        //getting data from dialog
+                        place = new Place();
+                        place.setName(placeName.getText().toString());
+                        place.setAddress(placeAddress.getText().toString());
+                        place.setPhone(Integer.parseInt(placePhone.getText().toString()));
+                        place.setFacebookLink(placeFacebook.getText().toString());
+                        place.setEmail(placeEmail.getText().toString());
+
+                        placeDao.create(place);
+                        Log.d("PlaceFragment: ", "Saved place: " + place.getName());
+                    }else{
+                        place = placeDao.queryForId(Integer.parseInt(placeId.getText().toString()));
+                        place.setName(placeName.getText().toString());
+                        place.setAddress(placeAddress.getText().toString());
+                        place.setPhone(Integer.parseInt(placePhone.getText().toString()));
+                        place.setFacebookLink(placeFacebook.getText().toString());
+                        place.setEmail(placeEmail.getText().toString());
+
+                        placeDao.update(place);
+                        Log.d("PlaceFragment: ", "Updated place: " + place.getName());
+                    }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                placesList.clear();
+                placesList.addAll(getAllPlaceFromDatabase());
+                placesListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+            }
+        });
+    }
+
+    private List<Place> getAllPlaceFromDatabase() {
+        // Reading all Place
+        Log.d("PlaceFragment: ", "Reading all places from database...");
+        List<Place> placesList = null;
+        try {
+            // This is how, a reference of DAO object can be done
+            placesList = databaseHelper.getPlacesDao().queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return placesList;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.fabAddNewPlace:
+                removeView();
+                add = true;
+                addEditPlaceDialog.setTitle("Nuevo lugar");
+                placeName.setText("");
+                placeAddress.setText("");
+                placePhone.setText("");
+                placeFacebook.setText("");
+                placeEmail.setText("");
+                addEditPlaceDialog.show();
+                break;
         }
     }
 }
