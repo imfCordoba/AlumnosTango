@@ -38,11 +38,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PlacesFragment extends Fragment implements View.OnClickListener {
+public class PlacesFragment extends Fragment {
 
 
     private ArrayList<Place> placesList =  new ArrayList<>();
@@ -88,15 +90,12 @@ public class PlacesFragment extends Fragment implements View.OnClickListener {
     @BindView(R.id.dialog_place_email)
     EditText placeEmail;
 
-
     //daos
     Dao<Place, Integer> placeDao;
-
 
     public PlacesFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -123,7 +122,6 @@ public class PlacesFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initViews(View thisFragment) {
-        fabAddPlace.setOnClickListener(this);
         placesRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
         placesRecyclerView.setLayoutManager(layoutManager);
@@ -286,20 +284,17 @@ public class PlacesFragment extends Fragment implements View.OnClickListener {
         return placesList;
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.fabAddNewPlace:
-                removeView();
-                add = true;
-                addEditPlaceDialog.setTitle("Nuevo lugar");
-                placeName.setText("");
-                placeAddress.setText("");
-                placePhone.setText("");
-                placeFacebook.setText("");
-                placeEmail.setText("");
-                addEditPlaceDialog.show();
-                break;
-        }
+    @Optional
+    @OnClick(R.id.fabAddNewPlace)
+    public void onClickAddNewPlace() {
+        removeView();
+        add = true;
+        addEditPlaceDialog.setTitle("Nuevo lugar");
+        placeName.setText("");
+        placeAddress.setText("");
+        placePhone.setText("");
+        placeFacebook.setText("");
+        placeEmail.setText("");
+        addEditPlaceDialog.show();
     }
 }

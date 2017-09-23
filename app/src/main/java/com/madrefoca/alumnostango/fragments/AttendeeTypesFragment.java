@@ -229,13 +229,6 @@ public class AttendeeTypesFragment extends Fragment {
         addEditAttendeeTypeDialog.setTitle("Nuevo tipo de asistente");
         attendeeTypeName.setText("");
         addEditAttendeeTypeDialog.show();
-
-        /*AddAttendeesTypesFragment addAttendeesTypesFragment= new AddAttendeesTypesFragment();
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame, addAttendeesTypesFragment, "nav_addAttendeesTypes");
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();*/
     }
 
     private List<AttendeeType> getAllAttendeeTypesFromDatabase() {

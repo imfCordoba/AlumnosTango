@@ -32,6 +32,7 @@ import com.madrefoca.alumnostango.adapters.EventsDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.model.EventType;
+import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,11 +40,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EventsFragment extends Fragment implements View.OnClickListener{
+public class EventsFragment extends Fragment {
     private ArrayList<Event> eventsList =  new ArrayList<>();
     private DatabaseHelper databaseHelper = null;
     private EventsDataAdapter eventsListAdapter;
@@ -116,9 +119,6 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initViews(View thisFragment) {
-
-        fabEventType.setOnClickListener(this);
-        fabAddEvent.setOnClickListener(this);
         eventsRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
         eventsRecyclerView.setLayoutManager(layoutManager);
@@ -300,28 +300,28 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
         return eventsList;
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.fabAddEvent:
-                removeView();
-                add = true;
-
-                addEditEventDialog.setTitle("Nuevo evento");
-
-                eventName.setText("");
-
-                addEditEventDialog.show();
-                break;
-            case R.id.fabEventTypes:
-                EventTypesFragment eventTypesFragment= new EventTypesFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame, eventTypesFragment, "nav_listEventTypes");
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                break;
-        }
+    @Optional
+    @OnClick(R.id.fabAddEvent)
+    public void onClickAddNewEvent() {
+        removeView();
+        add = true;
+        addEditEventDialog.setTitle("Nuevo evento");
+        eventName.setText("");
+        addEditEventDialog.show();
     }
 
+    @Optional
+    @OnClick(R.id.fabEventTypes)
+    public void onClickDisplayEventTypesFragment() {
+        ManageFragmentsNavigation.navItemIndex = 8;
+        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_EVENT_TYPES;
+
+        // update the main content by replacing fragments
+        Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.commitAllowingStateLoss();
+    }
 }
