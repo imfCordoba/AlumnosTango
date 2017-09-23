@@ -18,14 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.madrefoca.alumnostango.R;
-import com.madrefoca.alumnostango.fragments.AttendeesFragment;
-import com.madrefoca.alumnostango.fragments.EventsFragment;
-import com.madrefoca.alumnostango.fragments.HomeFragment;
-import com.madrefoca.alumnostango.fragments.NotificationsFragment;
-import com.madrefoca.alumnostango.fragments.PaymentsFragment;
-import com.madrefoca.alumnostango.fragments.PlacesFragment;
-import com.madrefoca.alumnostango.fragments.SettingsFragment;
-import com.madrefoca.alumnostango.model.Place;
+import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -34,20 +27,8 @@ public class MainActivity extends AppCompatActivity{
     private Toolbar toolbar;
     private FloatingActionButton fab;
 
-
     // index to identify current nav menu item
     public static int navItemIndex = 0;
-
-    // tags used to attach the fragments
-    private static final String TAG_HOME = "home";
-    private static final String TAG_STUDENTS = "students";
-    private static final String TAG_EVENTS = "events";
-    private static final String TAG_PLACES = "places";
-    private static final String TAG_PAYMENTS = "payments";
-    private static final String TAG_NOTIFICATIONS= "notifications";
-    private static final String TAG_SETTINGS = "settings";
-    private static final String TAG_ABOUTUS = "aboutUs";
-    public static String CURRENT_TAG = TAG_HOME;
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -55,7 +36,6 @@ public class MainActivity extends AppCompatActivity{
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +66,8 @@ public class MainActivity extends AppCompatActivity{
         setUpNavigationView();
 
         if (savedInstanceState == null) {
-            navItemIndex = 0;
-            CURRENT_TAG = TAG_HOME;
+            ManageFragmentsNavigation.navItemIndex = 0;
+            ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_HOME;
             loadHomeFragment();
         }
 
@@ -110,7 +90,7 @@ public class MainActivity extends AppCompatActivity{
 
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
-        if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
+        if (getSupportFragmentManager().findFragmentByTag(ManageFragmentsNavigation.CURRENT_TAG) != null) {
             drawer.closeDrawers();
 
             // show or hide the fab button
@@ -126,11 +106,11 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void run() {
                 // update the main content by replacing fragments
-                Fragment fragment = getHomeFragment();
+                Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
                 fragmentTransaction.commitAllowingStateLoss();
             }
         };
@@ -150,40 +130,14 @@ public class MainActivity extends AppCompatActivity{
         invalidateOptionsMenu();
     }
 
-    private Fragment getHomeFragment() {
-        switch (navItemIndex) {
-            case 0:
-                HomeFragment homeFragment = new HomeFragment();
-                return homeFragment;
-            case 1:
-                AttendeesFragment attendeesFragment = new AttendeesFragment();
-                return attendeesFragment;
-            case 2:
-                EventsFragment eventsFragment = new EventsFragment();
-                return eventsFragment;
-            case 3:
-                PlacesFragment placesFragment = new PlacesFragment();
-                return placesFragment;
-            case 4:
-                PaymentsFragment paymentsFragment = new PaymentsFragment();
-                return paymentsFragment;
-            case 5:
-                NotificationsFragment notificationsFragment = new NotificationsFragment();
-                return notificationsFragment;
-            case 6:
-                SettingsFragment settingsFragment = new SettingsFragment();
-                return settingsFragment;
-            default:
-                return new HomeFragment();
-        }
-    }
+
 
     private void setToolbarTitle() {
-        getSupportActionBar().setTitle(activityTitles[navItemIndex]);
+        getSupportActionBar().setTitle(activityTitles[ManageFragmentsNavigation.navItemIndex]);
     }
 
     private void selectNavMenu() {
-        navigationView.getMenu().getItem(navItemIndex).setChecked(true);
+        navigationView.getMenu().getItem(ManageFragmentsNavigation.navItemIndex).setChecked(true);
     }
 
     private void setUpNavigationView() {
@@ -198,32 +152,32 @@ public class MainActivity extends AppCompatActivity{
                 switch (menuItem.getItemId()) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.nav_home:
-                        navItemIndex = 0;
-                        CURRENT_TAG = TAG_HOME;
+                        ManageFragmentsNavigation.navItemIndex = 0;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_HOME;
                         break;
                     case R.id.nav_attendees:
-                        navItemIndex = 1;
-                        CURRENT_TAG = TAG_STUDENTS;
+                        ManageFragmentsNavigation.navItemIndex = 1;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEES;
                         break;
                     case R.id.nav_events:
-                        navItemIndex = 2;
-                        CURRENT_TAG = TAG_EVENTS;
+                        ManageFragmentsNavigation.navItemIndex = 2;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_EVENTS;
                         break;
                     case R.id.nav_places:
-                        navItemIndex = 3;
-                        CURRENT_TAG = TAG_PLACES;
+                        ManageFragmentsNavigation.navItemIndex = 3;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_PLACES;
                         break;
                     case R.id.nav_payments:
-                        navItemIndex = 4;
-                        CURRENT_TAG = TAG_PAYMENTS;
+                        ManageFragmentsNavigation.navItemIndex = 4;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_PAYMENTS;
                         break;
                     case R.id.nav_notification:
-                        navItemIndex = 5;
-                        CURRENT_TAG = TAG_NOTIFICATIONS;
+                        ManageFragmentsNavigation.navItemIndex = 5;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_NOTIFICATIONS;
                         break;
                     case R.id.nav_settings:
-                        navItemIndex = 6;
-                        CURRENT_TAG = TAG_SETTINGS;
+                        ManageFragmentsNavigation.navItemIndex = 6;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_SETTINGS;
                         break;
 
                     case R.id.nav_aboutUs:
@@ -232,7 +186,7 @@ public class MainActivity extends AppCompatActivity{
                         drawer.closeDrawers();
                         return true;
                     default:
-                        navItemIndex = 0;
+                        ManageFragmentsNavigation.navItemIndex = 0;
                 }
 
                 //Checking if the item is in checked state or not, if not make it in checked state
@@ -274,7 +228,7 @@ public class MainActivity extends AppCompatActivity{
 
     // show or hide the fab
     private void toggleFab() {
-        if (navItemIndex == 0)
+        if (ManageFragmentsNavigation.navItemIndex == 0)
             fab.show();
         else
             fab.hide();

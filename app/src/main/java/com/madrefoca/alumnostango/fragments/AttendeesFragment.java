@@ -33,6 +33,7 @@ import com.madrefoca.alumnostango.adapters.AttendeesDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeType;
+import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,11 +41,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AttendeesFragment extends Fragment implements View.OnClickListener{
+public class AttendeesFragment extends Fragment {
 
     private ArrayList<Attendee> attendeesList =  new ArrayList<>();
     private DatabaseHelper databaseHelper = null;
@@ -141,9 +144,6 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initViews(View thisFragment) {
-
-        fabAttendeeType.setOnClickListener(this);
-        fabAddAttendee.setOnClickListener(this);
         attendeesRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
         attendeesRecyclerView.setLayoutManager(layoutManager);
@@ -350,33 +350,34 @@ public class AttendeesFragment extends Fragment implements View.OnClickListener{
         return attendeesList;
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.fabAddAttendee:
-                removeView();
-                add = true;
+    @Optional
+    @OnClick(R.id.fabAddAttendee)
+    public void onClickAddNewAttendee() {
+        removeView();
+        add = true;
+        addEditAttendeeDialog.setTitle("Nuevo alumno");
+        attendeeName.setText("");
+        attendeeLastName.setText("");
+        attendeeAge.setText("");
+        attendeePhone.setText("");
+        attendeeFacebook.setText("");
+        attendeeEmail.setText("");
+        attendeeTypesSpinner.setSelection(1);
+        addEditAttendeeDialog.show();
+    }
 
-                addEditAttendeeDialog.setTitle("Nuevo alumno");
+    @Optional
+    @OnClick(R.id.fabAttendeeTypes)
+    public void onClickDisplayAttendeeTypesFragment() {
+        ManageFragmentsNavigation.navItemIndex = 7;
+        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEE_TYPES;
 
-                attendeeName.setText("");
-                attendeeLastName.setText("");
-                attendeeAge.setText("");
-                attendeePhone.setText("");
-                attendeeFacebook.setText("");
-                attendeeEmail.setText("");
-                attendeeTypesSpinner.setSelection(1);
-
-                addEditAttendeeDialog.show();
-                break;
-            case R.id.fabAttendeeTypes:
-                AttendeeTypesFragment attendeeTypesFragment= new AttendeeTypesFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame, attendeeTypesFragment, "nav_listAttendeeTypes");
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                break;
-        }
+        // update the main content by replacing fragments
+        Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 }

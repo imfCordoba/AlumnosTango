@@ -230,13 +230,6 @@ public class EventTypesFragment extends Fragment {
         addEditEventTypesDialog.setTitle("Nuevo tipo de evento");
         eventTypeName.setText("");
         addEditEventTypesDialog.show();
-
-        /*AddEventsTypesFragment addEventsTypesFragment= new AddEventsTypesFragment();
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame, addEventsTypesFragment, "nav_addEventsTypes");
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();*/
     }
 
     private List<EventType> getAllEventTypesFromDatabase() {

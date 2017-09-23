@@ -26,6 +26,8 @@
         <item>Notificaciones</item>
         <item>Configuraciones</item>
         <item>Acerca de nosotros</item>
+        <item>Tipo de asistente</item>
+        <item>Tipo de clase</item>
     </string-array>
 
     <string name="activity_title_about_us">Acerca de nosotros</string>
