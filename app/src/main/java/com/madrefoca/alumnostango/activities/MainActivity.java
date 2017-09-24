@@ -3,8 +3,6 @@ package com.madrefoca.alumnostango.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 
@@ -25,10 +22,6 @@ public class MainActivity extends AppCompatActivity{
     private NavigationView navigationView;
     private DrawerLayout drawer;
     private Toolbar toolbar;
-    private FloatingActionButton fab;
-
-    // index to identify current nav menu item
-    public static int navItemIndex = 0;
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -47,25 +40,15 @@ public class MainActivity extends AppCompatActivity{
         mHandler = new Handler();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
 
 
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-
         // initializing navigation menu
-        setUpNavigationView();
+
 
         if (savedInstanceState == null) {
+            setUpNavigationView();
             ManageFragmentsNavigation.navItemIndex = 0;
             ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_HOME;
             loadHomeFragment();
@@ -92,9 +75,6 @@ public class MainActivity extends AppCompatActivity{
         // just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(ManageFragmentsNavigation.CURRENT_TAG) != null) {
             drawer.closeDrawers();
-
-            // show or hide the fab button
-            toggleFab();
             return;
         }
 
@@ -119,9 +99,6 @@ public class MainActivity extends AppCompatActivity{
         if (mPendingRunnable != null) {
             mHandler.post(mPendingRunnable);
         }
-
-        // show or hide the fab button
-        toggleFab();
 
         //Closing drawer on item click
         drawer.closeDrawers();
@@ -226,14 +203,6 @@ public class MainActivity extends AppCompatActivity{
         actionBarDrawerToggle.syncState();
     }
 
-    // show or hide the fab
-    private void toggleFab() {
-        if (ManageFragmentsNavigation.navItemIndex == 0)
-            fab.show();
-        else
-            fab.hide();
-    }
-
     @Override
     public void onBackPressed() {
         // TODO: 02/09/17 completar
@@ -267,31 +236,4 @@ public class MainActivity extends AppCompatActivity{
 
         return super.onOptionsItemSelected(item);
     }
-
-    /*@SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-
-        } else if (id == R.id.nav_attendees) {
-
-        } else if (id == R.id.nav_events) {
-
-        } else if (id == R.id.nav_payments) {
-
-        } else if (id == R.id.nav_notification) {
-
-        } else if (id == R.id.nav_settings) {
-
-        } else if (id == R.id.nav_aboutUs) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }*/
 }
