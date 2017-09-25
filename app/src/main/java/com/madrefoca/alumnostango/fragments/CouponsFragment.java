@@ -11,8 +11,6 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,16 +21,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
-import com.madrefoca.alumnostango.adapters.EventsDataAdapter;
+import com.madrefoca.alumnostango.adapters.CouponsDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
-import com.madrefoca.alumnostango.model.Event;
-import com.madrefoca.alumnostango.model.EventType;
-import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
+import com.madrefoca.alumnostango.model.Attendee;
+import com.madrefoca.alumnostango.model.AttendeeType;
+import com.madrefoca.alumnostango.model.Coupon;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,72 +45,65 @@ import butterknife.Optional;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EventsFragment extends Fragment {
-    private ArrayList<Event> eventsList =  new ArrayList<>();
+public class CouponsFragment extends Fragment {
+
+    private ArrayList<Coupon> couponsList =  new ArrayList<>();
     private DatabaseHelper databaseHelper = null;
-    private EventsDataAdapter eventsListAdapter;
-    private AlertDialog.Builder addEditEventDialog;
+    private CouponsDataAdapter couponsListAdapter;
+    private AlertDialog.Builder addEditCouponDialog;
     private int edit_position;
     private View view;
     private boolean add = false;
     private Paint p = new Paint();
     private ArrayAdapter<String> dataAdapter;
 
-    @Nullable
-    @BindView(R.id.fabEventTypes)
-    FloatingActionButton fabEventType;
 
     @Nullable
-    @BindView(R.id.fabAddEvent)
-    FloatingActionButton fabAddEvent;
+    @BindView(R.id.fabAddNewCoupon)
+    FloatingActionButton fabAddCoupon;
 
     @Nullable
-    @BindView(R.id.eventsRecyclerView)
-    RecyclerView eventsRecyclerView;
+    @BindView(R.id.couponsRecyclerView)
+    RecyclerView couponsRecyclerView;
 
     @Nullable
-    @BindView(R.id.dialog_event_id)
-    EditText eventId;
+    @BindView(R.id.dialog_coupon_id)
+    EditText couponId;
 
     @Nullable
-    @BindView(R.id.dialog_event_name)
-    EditText eventName;
+    @BindView(R.id.dialog_coupon_number)
+    EditText couponNumber;
 
+    @Nullable
+    @BindView(R.id.dialog_attendees_spinner)
+    Spinner attendeesSpinner;
 
     //daos
-    Dao<EventType, Integer> eventTypeDao;
-    Dao<Event, Integer> eventDao;
+    Dao<Coupon, Integer> couponDao;
+    Dao<Attendee, Integer> attendeeDao;
 
-
-    public EventsFragment() {
+    public CouponsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View thisFragment = inflater.inflate(R.layout.fragment_events, container, false);
+        View thisFragment = inflater.inflate(R.layout.fragment_coupons, container, false);
 
         ButterKnife.bind(this, thisFragment);
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 
         try {
-            eventTypeDao = databaseHelper.getEventTypesDao();
-            eventDao = databaseHelper.getEventsDao();
+            couponDao = databaseHelper.getCouponsDao();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //databaseHelper.clearTables();
-
-        //Insert some students
-        //DatabasePopulatorUtil databasePopulatorUtil = new DatabasePopulatorUtil(databaseHelper);
-        //databasePopulatorUtil.populate();
 
         this.initViews(thisFragment);
 
-        this.populateEventsList(thisFragment);
+        this.populateCouponsList();
         this.initSwipe();
         this.initDialog(thisFragment);
         // Inflate the layout for this fragment
@@ -119,18 +111,18 @@ public class EventsFragment extends Fragment {
     }
 
     private void initViews(View thisFragment) {
-        eventsRecyclerView.setHasFixedSize(true);
+        couponsRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
-        eventsRecyclerView.setLayoutManager(layoutManager);
-        eventsListAdapter = new EventsDataAdapter(eventsList);
-        eventsRecyclerView.setAdapter(eventsListAdapter);
+        couponsRecyclerView.setLayoutManager(layoutManager);
+        couponsListAdapter = new CouponsDataAdapter(couponsList);
+        couponsRecyclerView.setAdapter(couponsListAdapter);
 
     }
 
-    private void populateEventsList(View thisFragment) {
-        Log.d("EventFragment: ", "put the Events in the view...");
-        eventsList.addAll(getAllEventFromDatabase());
-        eventsListAdapter.notifyDataSetChanged();
+    private void populateCouponsList() {
+        Log.d("CouponsFragment: ", "put the Coupons in the view...");
+        couponsList.addAll(getAllCouponFromDatabase());
+        couponsListAdapter.notifyDataSetChanged();
     }
 
     private void initSwipe() {
@@ -148,22 +140,23 @@ public class EventsFragment extends Fragment {
 
                 if (direction == ItemTouchHelper.LEFT){
                     try {
-                        eventDao.deleteById(eventsList.get(position).getIdEvent());
-                        Log.d("EventFragment: ", "Event: " + eventsList.get(position).getName() +" "+
-                                eventsList.get(position).getName() + ", with id: " +
-                                eventsList.get(position).getIdEvent() + " was deleted frm database.");
+                        couponDao.deleteById(couponsList.get(position).getIdCoupon());
+                        Log.d("CouponsFragment: ", "Coupon: " + couponsList.get(position).getNumber() + ", with id: " +
+                                couponsList.get(position).getIdCoupon() + " was deleted from database.");
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    eventsListAdapter.removeItem(position);
+                    couponsListAdapter.removeItem(position);
                 } else {
                     removeView();
                     edit_position = position;
-                    addEditEventDialog.setTitle("Editar alumno");
-                    eventId.setText(eventsList.get(position).getIdEvent().toString());
-                    eventName.setText(eventsList.get(position).getName());
+                    addEditCouponDialog.setTitle("Editar cupón");
+                    couponId.setText(couponsList.get(position).getIdCoupon().toString());
+                    couponNumber.setText(couponsList.get(position).getNumber().toString());
+                    attendeesSpinner.setSelection(dataAdapter.getPosition(
+                            couponsList.get(position).getAttendee().getName()));
 
-                    addEditEventDialog.show();
+                    addEditCouponDialog.show();
                 }
             }
 
@@ -203,7 +196,7 @@ public class EventsFragment extends Fragment {
 
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(eventsRecyclerView);
+        itemTouchHelper.attachToRecyclerView(couponsRecyclerView);
     }
 
     private void removeView(){
@@ -213,115 +206,84 @@ public class EventsFragment extends Fragment {
     }
 
     private void initDialog(View thisFragment){
-        addEditEventDialog = new AlertDialog.Builder(thisFragment.getContext());
-        view = getLayoutInflater().inflate(R.layout.dialog_events,null);
+        addEditCouponDialog = new AlertDialog.Builder(thisFragment.getContext());
+        view = getLayoutInflater().inflate(R.layout.dialog_coupons,null);
 
         ButterKnife.bind(this, view);
 
-        addEditEventDialog.setView(view);
+        addEditCouponDialog.setView(view);
 
-        this.populateEventTypesSpinner(view);
+        addEditCouponDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
 
-        addEditEventDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                EventType eventType = new EventType();
-                // TODO: 16/09/17 agregar una validacion por si tratan de crear un alumno y no tienen cargados los tipos de alumnos.
 
-                Event event = null;
+                Attendee attendee = new Attendee();
+                // TODO: 16/09/17 agregar una validacion por si tratan de crear un cupon y no tienen cargados los alumnos.
+                String attendeeSelected = attendeesSpinner.getSelectedItem().toString();
+                try {
+                    // TODO: 24/09/17 cambiar esta busqueda por un id para que no teng conflictos por nombres repetidos
+                    attendee = attendeeDao.queryForEq("name", attendeeSelected).get(0);
+                } catch (SQLException e) {
+                    Log.d("AttendeeFragment: ", "Cannot find attendee type: " + attendeeSelected + "in database");
+                    e.printStackTrace();
+                }
+                Coupon coupon = null;
 
                 try {
                     if(add){
                         add =false;
 
                         //getting data from dialog
-                        event = new Event();
-                        event.setName(eventName.getText().toString());
-                        event.setEventType(eventType);
-
-                        eventDao.create(event);
-                        Log.d("EventFragment: ", "Saved event: " + event.getName());
+                        coupon = new Coupon();
+                        coupon.setNumber(Long.parseLong(couponNumber.getText().toString()));
+                        coupon.setAttendee(attendee);
+                        couponDao.create(coupon);
+                        Log.d("CouponsFragment: ", "Saved coupon: " + coupon.getNumber());
                     }else{
-                        event = eventDao.queryForId(Integer.parseInt(eventId.getText().toString()));
-                        event.setName(eventName.getText().toString());
-                        event.setEventType(eventType);
-
-                        eventDao.update(event);
-                        Log.d("EventFragment: ", "Updated event: " + event.getName());
+                        coupon = couponDao.queryForId(Integer.parseInt(couponId.getText().toString()));
+                        coupon.setNumber(Long.parseLong(couponNumber.getText().toString()));
+                        coupon.setAttendee(attendee);
+                        couponDao.update(coupon);
+                        Log.d("CouponsFragment: ", "Updated coupon: " + coupon.getNumber());
                     }
 
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
-                eventsList.clear();
-                eventsList.addAll(getAllEventFromDatabase());
-                eventsListAdapter.notifyDataSetChanged();
+                couponsList.clear();
+                couponsList.addAll(getAllCouponFromDatabase());
+                couponsListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
 
             }
         });
     }
 
-    private void populateEventTypesSpinner(View view) {
-        //get events types to put into spinner
-        ArrayList<String> list = getEventTypesFromDatabase();
-
-        dataAdapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_spinner_item, list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //eventTypesSpinner.setAdapter(dataAdapter);
-    }
-
-    private ArrayList<String> getEventTypesFromDatabase() {
-        List<EventType> eventsTpesList = null;
-        try {
-            eventsTpesList = eventTypeDao.queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        ArrayList<String> list = new ArrayList<String>();
-        for(EventType eventType : eventsTpesList){
-            list.add(eventType.getName());
-        }
-        return list;
-    }
-
-    private List<Event> getAllEventFromDatabase() {
-        // Reading all Event
-        Log.d("EventFragment: ", "Reading all events from database...");
-        List<Event> eventsList = null;
+    private List<Coupon> getAllCouponFromDatabase() {
+        // Reading all Coupon
+        Log.d("CouponsFragment: ", "Reading all coupons from database...");
+        List<Coupon> couponsList = null;
         try {
             // This is how, a reference of DAO object can be done
-            eventsList = databaseHelper.getEventsDao().queryForAll();
+            couponsList = databaseHelper.getCouponsDao().queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return eventsList;
+        return couponsList;
     }
 
     @Optional
-    @OnClick(R.id.fabAddEvent)
-    public void onClickAddNewEvent() {
+    @OnClick(R.id.fabAddNewCoupon)
+    public void onClickAddNewCoupon() {
+        // TODO: 24/09/17 arreglar el spinner para que tenga los alumnos cargados
         removeView();
         add = true;
-        addEditEventDialog.setTitle("Nuevo evento");
-        eventName.setText("");
-        addEditEventDialog.show();
+        addEditCouponDialog.setTitle("Nuevo cupón");
+        couponNumber.setText("");
+        attendeesSpinner.setSelection(1);
+        addEditCouponDialog.show();
     }
 
-    @Optional
-    @OnClick(R.id.fabEventTypes)
-    public void onClickDisplayEventTypesFragment() {
-        ManageFragmentsNavigation.navItemIndex = 9;
-        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_EVENT_TYPES;
-
-        // update the main content by replacing fragments
-        Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
-        fragmentTransaction.commitAllowingStateLoss();
-    }
 }

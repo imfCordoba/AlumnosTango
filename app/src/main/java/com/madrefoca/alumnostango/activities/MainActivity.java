@@ -148,12 +148,16 @@ public class MainActivity extends AppCompatActivity{
                         ManageFragmentsNavigation.navItemIndex = 4;
                         ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_PAYMENTS;
                         break;
-                    case R.id.nav_notification:
+                    case R.id.nav_coupons:
                         ManageFragmentsNavigation.navItemIndex = 5;
+                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_COUPONS;
+                        break;
+                    case R.id.nav_notification:
+                        ManageFragmentsNavigation.navItemIndex = 6;
                         ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_NOTIFICATIONS;
                         break;
                     case R.id.nav_settings:
-                        ManageFragmentsNavigation.navItemIndex = 6;
+                        ManageFragmentsNavigation.navItemIndex = 7;
                         ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_SETTINGS;
                         break;
 

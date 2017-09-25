@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 
 import com.madrefoca.alumnostango.fragments.AttendeeTypesFragment;
 import com.madrefoca.alumnostango.fragments.AttendeesFragment;
+import com.madrefoca.alumnostango.fragments.CouponsFragment;
 import com.madrefoca.alumnostango.fragments.EventTypesFragment;
 import com.madrefoca.alumnostango.fragments.EventsFragment;
 import com.madrefoca.alumnostango.fragments.HomeFragment;
@@ -30,11 +31,12 @@ public class ManageFragmentsNavigation {
     public static final String TAG_EVENT_TYPES = "eventTypes";
     public static final String TAG_PLACES = "places";
     public static final String TAG_PAYMENTS = "payments";
+    public static final String TAG_COUPONS = "coupons";
     public static final String TAG_NOTIFICATIONS= "notifications";
     public static final String TAG_SETTINGS = "settings";
     public static final String TAG_ABOUTUS = "aboutUs";
     public static String CURRENT_TAG = TAG_HOME;
-
+    // TODO: 24/09/17 cambiar la forma de asignar los numeros a los fragments
     public static Fragment getHomeFragment() {
         switch (navItemIndex) {
             case 0:
@@ -53,15 +55,18 @@ public class ManageFragmentsNavigation {
                 PaymentsFragment paymentsFragment = new PaymentsFragment();
                 return paymentsFragment;
             case 5:
+                CouponsFragment couponsFragment = new CouponsFragment();
+                return couponsFragment;
+            case 6:
                 NotificationsFragment notificationsFragment = new NotificationsFragment();
                 return notificationsFragment;
-            case 6:
+            case 7:
                 SettingsFragment settingsFragment = new SettingsFragment();
                 return settingsFragment;
-            case 7:
+            case 8:
                 AttendeeTypesFragment attendeeTypesFragment = new AttendeeTypesFragment();
                 return attendeeTypesFragment;
-            case 8:
+            case 9:
                 EventTypesFragment eventTypesFragment = new EventTypesFragment();
                 return eventTypesFragment;
             default:

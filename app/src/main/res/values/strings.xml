@@ -12,6 +12,7 @@
     <string name="nav_events">Clases</string>
     <string name="nav_places">Lugares</string>
     <string name="nav_payments">Pagos</string>
+    <string name="nav_coupons">Cupones</string>
     <string name="nav_notifications">Notificaciones</string>
     <string name="nav_configurations">Configuraciones</string>
     <string name="nav_about_us">Acerca de nosotros</string>
@@ -23,6 +24,7 @@
         <item>Clases</item>
         <item>Lugares</item>
         <item>Pagos</item>
+        <item>Cupones</item>
         <item>Notificaciones</item>
         <item>Configuraciones</item>
         <item>Acerca de nosotros</item>

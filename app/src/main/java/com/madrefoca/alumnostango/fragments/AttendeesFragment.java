@@ -369,7 +369,7 @@ public class AttendeesFragment extends Fragment {
     @Optional
     @OnClick(R.id.fabAttendeeTypes)
     public void onClickDisplayAttendeeTypesFragment() {
-        ManageFragmentsNavigation.navItemIndex = 7;
+        ManageFragmentsNavigation.navItemIndex = 8;
         ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEE_TYPES;
 
         // update the main content by replacing fragments

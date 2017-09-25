@@ -16,6 +16,9 @@ public class Coupon {
     private Attendee attendee;
 
     @DatabaseField
+    private Long number;
+
+    @DatabaseField
     private String description;
 
     public Coupon() {
@@ -40,6 +43,14 @@ public class Coupon {
 
     public void setAttendee(Attendee attendee) {
         this.attendee = attendee;
+    }
+
+    public Long getNumber() {
+        return number;
+    }
+
+    public void setNumber(Long number) {
+        this.number = number;
     }
 
     public String getDescription() {

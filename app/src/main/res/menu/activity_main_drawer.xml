@@ -23,6 +23,10 @@
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Pagos" />
         <item
+            android:id="@+id/nav_coupons"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Cupones" />
+        <item
             android:id="@+id/nav_notification"
             android:icon="@drawable/ic_menu_send"
             android:title="Notificaciones" />
