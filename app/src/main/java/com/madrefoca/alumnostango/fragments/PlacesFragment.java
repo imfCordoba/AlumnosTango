@@ -1,6 +1,7 @@
 package com.madrefoca.alumnostango.fragments;
 
 
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,9 +11,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -116,7 +114,7 @@ public class PlacesFragment extends Fragment {
 
         this.populatePlacesList();
         this.initSwipe();
-        this.initDialog(thisFragment);
+        this.initDialog(thisFragment, inflater);
         // Inflate the layout for this fragment
         return thisFragment;
     }
@@ -219,9 +217,9 @@ public class PlacesFragment extends Fragment {
         }
     }
 
-    private void initDialog(View thisFragment){
+    private void initDialog(View thisFragment, LayoutInflater inflater) {
         addEditPlaceDialog = new AlertDialog.Builder(thisFragment.getContext());
-        view = getLayoutInflater().inflate(R.layout.dialog_places,null);
+        view = inflater.inflate(R.layout.dialog_places,null);
 
         ButterKnife.bind(this, view);
 

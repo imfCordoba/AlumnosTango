@@ -1,10 +1,10 @@
 package com.madrefoca.alumnostango.activities;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -87,9 +87,7 @@ public class MainActivity extends AppCompatActivity{
             public void run() {
                 // update the main content by replacing fragments
                 Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
                 fragmentTransaction.commitAllowingStateLoss();
             }
