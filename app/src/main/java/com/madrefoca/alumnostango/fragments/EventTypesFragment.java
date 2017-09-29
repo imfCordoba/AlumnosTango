@@ -1,6 +1,7 @@
 package com.madrefoca.alumnostango.fragments;
 
 
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,7 +11,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -95,7 +95,7 @@ public class EventTypesFragment extends Fragment {
         //populate list
         this.populateEventTypesList();
         this.initSwipe();
-        this.initDialog(thisFragment);
+        this.initDialog(thisFragment, inflater);
 
         // Inflate the layout for this fragment
         return thisFragment;
@@ -186,9 +186,9 @@ public class EventTypesFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(eventTypesRecyclerView);
     }
 
-    private void initDialog(View thisFragment) {
+    private void initDialog(View thisFragment, LayoutInflater inflater)  {
         addEditEventTypesDialog = new AlertDialog.Builder(thisFragment.getContext());
-        view = getLayoutInflater().inflate(R.layout.dialog_event_types,null);
+        view = inflater.inflate(R.layout.dialog_event_types,null);
         ButterKnife.bind(this, view);
         addEditEventTypesDialog.setView(view);
 

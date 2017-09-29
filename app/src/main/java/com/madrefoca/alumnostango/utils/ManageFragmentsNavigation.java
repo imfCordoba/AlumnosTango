@@ -1,6 +1,7 @@
 package com.madrefoca.alumnostango.utils;
 
-import android.support.v4.app.Fragment;
+
+import android.app.Fragment;
 
 import com.madrefoca.alumnostango.fragments.AttendeeTypesFragment;
 import com.madrefoca.alumnostango.fragments.AttendeesFragment;

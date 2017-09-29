@@ -1,6 +1,8 @@
 package com.madrefoca.alumnostango.fragments;
 
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,9 +11,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -138,7 +137,7 @@ public class AttendeesFragment extends Fragment {
 
         this.populateAttendeesList(thisFragment);
         this.initSwipe();
-        this.initDialog(thisFragment);
+        this.initDialog(thisFragment, inflater);
         // Inflate the layout for this fragment
         return thisFragment;
     }
@@ -245,9 +244,9 @@ public class AttendeesFragment extends Fragment {
         }
     }
 
-    private void initDialog(View thisFragment){
+    private void initDialog(View thisFragment, LayoutInflater inflater) {
         addEditAttendeeDialog = new AlertDialog.Builder(thisFragment.getContext());
-        view = getLayoutInflater().inflate(R.layout.dialog_attendees,null);
+        view = inflater.inflate(R.layout.dialog_attendees,null);
 
         ButterKnife.bind(this, view);
 
@@ -374,9 +373,7 @@ public class AttendeesFragment extends Fragment {
 
         // update the main content by replacing fragments
         Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out);
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
         fragmentTransaction.commitAllowingStateLoss();
     }
