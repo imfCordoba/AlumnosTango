@@ -236,14 +236,12 @@ public class EventsFragment extends Fragment {
                         //getting data from dialog
                         event = new Event();
                         event.setName(eventName.getText().toString());
-                        event.setEventType(eventType);
 
                         eventDao.create(event);
                         Log.d("EventFragment: ", "Saved event: " + event.getName());
                     }else{
                         event = eventDao.queryForId(Integer.parseInt(eventId.getText().toString()));
                         event.setName(eventName.getText().toString());
-                        event.setEventType(eventType);
 
                         eventDao.update(event);
                         Log.d("EventFragment: ", "Updated event: " + event.getName());

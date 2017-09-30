@@ -10,8 +10,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -322,15 +322,15 @@ public class AttendeesFragment extends Fragment {
     }
 
     private ArrayList<String> getAttendeeTypesFromDatabase() {
-        List<AttendeeType> attendeesTpesList = null;
+        List<AttendeeType> attendeesTypesList = null;
         try {
-            attendeesTpesList = attendeeTypeDao.queryForAll();
+            attendeesTypesList = attendeeTypeDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         ArrayList<String> list = new ArrayList<String>();
-        for(AttendeeType attendeeType : attendeesTpesList){
+        for(AttendeeType attendeeType : attendeesTypesList){
             list.add(attendeeType.getName());
         }
         return list;

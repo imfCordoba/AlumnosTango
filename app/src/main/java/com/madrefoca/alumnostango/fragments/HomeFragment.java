@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,16 +28,13 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.adapters.EventsDataAdapter;
-import com.madrefoca.alumnostango.adapters.PickerAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.model.EventType;
 import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,7 +45,7 @@ import butterknife.Optional;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
+public class HomeFragment extends Fragment {
 
     private ArrayList<Event> eventsList =  new ArrayList<>();
     private DatabaseHelper databaseHelper = null;
@@ -238,14 +234,12 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
                         //getting data from dialog
                         event = new Event();
                         event.setName(eventName.getText().toString());
-                        event.setEventType(eventType);
 
                         eventDao.create(event);
                         Log.d("EventFragment: ", "Saved event: " + event.getName());
                     }else{
                         event = eventDao.queryForId(Integer.parseInt(eventId.getText().toString()));
                         event.setName(eventName.getText().toString());
-                        event.setEventType(eventType);
 
                         eventDao.update(event);
                         Log.d("EventFragment: ", "Updated event: " + event.getName());
@@ -306,43 +300,14 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
     public void onClickAddNewEvent() {
         // TODO: 25/09/17  https://github.com/wdullaer/MaterialDateTimePicker
         // TODO: 25/09/17  https://android--examples.blogspot.com.ar/2015/05/how-to-use-datepickerdialog-in-android.html
-        removeView();
 
-        Calendar now = Calendar.getInstance();
-        DatePickerDialog dpd = DatePickerDialog.newInstance(
-                HomeFragment.this,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH)
-        );
-        dpd.setThemeDark(true);
-        dpd.vibrate(true);
-        dpd.dismissOnPause(true);
-        dpd.showYearPickerFirst(true);
-        dpd.setVersion(true ? DatePickerDialog.Version.VERSION_2 : DatePickerDialog.Version.VERSION_1);
-        dpd.setAccentColor(Color.parseColor("#9C27B0"));
-        dpd.setTitle("Fecha de la clase");
+        Fragment fragment = new DatePickerFragment();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-        if (true) {
-            Calendar date1 = Calendar.getInstance();
-            Calendar date2 = Calendar.getInstance();
-            date2.add(Calendar.WEEK_OF_MONTH, -1);
-            Calendar date3 = Calendar.getInstance();
-            date3.add(Calendar.WEEK_OF_MONTH, 1);
-            Calendar[] days = {date1, date2, date3};
-            dpd.setHighlightedDays(days);
-        }
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.commitAllowingStateLoss();
 
-        if (false) {
-            Calendar[] days = new Calendar[13];
-            for (int i = -6; i < 7; i++) {
-                Calendar day = Calendar.getInstance();
-                day.add(Calendar.DAY_OF_MONTH, i * 2);
-                days[i + 6] = day;
-            }
-            dpd.setSelectableDays(days);
-        }
-        dpd.show(getFragmentManager(), "Datepickerdialog");
+
     }
 
     @Optional
@@ -357,19 +322,6 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
 
         fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
         fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        DatePickerDialog dpd = (DatePickerDialog) getFragmentManager().findFragmentByTag("Datepickerdialog");
-        if(dpd != null) dpd.setOnDateSetListener(this);
-    }
-
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = "You picked the following date: "+dayOfMonth+"/"+(++monthOfYear)+"/"+year;
-        //dateTextView.setText(date);
     }
 
 }

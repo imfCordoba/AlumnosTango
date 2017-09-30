@@ -12,9 +12,9 @@ public class Event {
 
     @DatabaseField(generatedId = true, canBeNull = false)
     private Integer idEvent;
-
-    @DatabaseField(foreign = true, columnName = "idEventType")
-    private EventType eventType;
+    // TODO: 30/09/17 agregar de nuevo el tipo de evento
+    //@DatabaseField(foreign = true, columnName = "idEventType")
+    //private EventType eventType;
 
     @DatabaseField(foreign = true, columnName = "idPlace")
     private Place place;
@@ -34,12 +34,14 @@ public class Event {
     @DatabaseField
     private Integer hour;
 
+    @DatabaseField
+    private Integer minutes;
+
     public Event() {
     }
 
-    public Event(EventType eventType, Place place, String name, Integer day, Integer month,
+    public Event(Place place, String name, Integer day, Integer month,
                  Integer year, Integer hour) {
-        this.eventType = eventType;
         this.place = place;
         this.name = name;
         this.day = day;
@@ -54,14 +56,6 @@ public class Event {
 
     public void setIdEvent(Integer idEvent) {
         this.idEvent = idEvent;
-    }
-
-    public EventType getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
     }
 
     public Place getPlace() {
@@ -110,5 +104,13 @@ public class Event {
 
     public void setHour(Integer hour) {
         this.hour = hour;
+    }
+
+    public Integer getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(Integer minutes) {
+        this.minutes = minutes;
     }
 }

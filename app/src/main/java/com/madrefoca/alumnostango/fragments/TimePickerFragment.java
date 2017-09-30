@@ -2,39 +2,56 @@ package com.madrefoca.alumnostango.fragments;
 
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.Timepoint;
-
-import java.util.Calendar;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
+import com.madrefoca.alumnostango.helpers.DatabaseHelper;
+import com.madrefoca.alumnostango.model.Event;
+import com.madrefoca.alumnostango.model.Place;
+import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class TimePickerFragment extends Fragment implements TimePickerDialog.OnTimeSetListener {
 
-    private TextView timeTextView;
-    private CheckBox mode24Hours;
-    private CheckBox modeDarkTime;
-    private CheckBox modeCustomAccentTime;
-    private CheckBox vibrateTime;
-    private CheckBox dismissTime;
-    private CheckBox titleTime;
-    private CheckBox enableSeconds;
-    private CheckBox limitSelectableTimes;
-    private CheckBox disableSpecificTimes;
-    private CheckBox showVersion2;
+    private AlertDialog.Builder addPlaceDialog;
+    private View view;
+    private ArrayAdapter<String> dataAdapter;
+    private DatabaseHelper databaseHelper = null;
+    private Bundle bundle;
+
+
+    @Nullable
+    @BindView(R.id.place_spinner)
+    Spinner placeSpinner;
+
+    //daos
+    Dao<Place, Integer> placesDao;
+    Dao<Event, Integer> eventsDao;
 
     public TimePickerFragment() {
         // Required empty public constructor
@@ -44,69 +61,40 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_time_picker, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Find our View instances
-        timeTextView = view.findViewById(R.id.time_textview);
-        Button timeButton = view.findViewById(R.id.time_button);
-        mode24Hours = view.findViewById(R.id.mode_24_hours);
-        modeDarkTime = view.findViewById(R.id.mode_dark_time);
-        modeCustomAccentTime = view.findViewById(R.id.mode_custom_accent_time);
-        vibrateTime = view.findViewById(R.id.vibrate_time);
-        dismissTime = view.findViewById(R.id.dismiss_time);
-        titleTime = view.findViewById(R.id.title_time);
-        enableSeconds = view.findViewById(R.id.enable_seconds);
-        limitSelectableTimes = view.findViewById(R.id.limit_times);
-        disableSpecificTimes = view.findViewById(R.id.disable_times);
-        showVersion2 = view.findViewById(R.id.show_version_2);
+        //date from datePicker
+        bundle = new Bundle();
+        this.bundle = this.getArguments();
 
-        // Show a timepicker when the timeButton is clicked
-        timeButton.setOnClickListener(new View.OnClickListener() {
+        databaseHelper = OpenHelperManager.getHelper(this.getContext(),DatabaseHelper.class);
+
+        try {
+            placesDao = databaseHelper.getPlacesDao();
+            eventsDao = databaseHelper.getEventsDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        this.initDialog(view, inflater);
+
+        Calendar now = Calendar.getInstance();
+        TimePickerDialog tpd = TimePickerDialog.newInstance(
+                TimePickerFragment.this,
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                true
+        );
+        tpd.vibrate(true);
+        tpd.enableSeconds(false);
+        tpd.setTitle("Hora del evento");
+        tpd.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
-            public void onClick(View v) {
-                Calendar now = Calendar.getInstance();
-                TimePickerDialog tpd = TimePickerDialog.newInstance(
-                        TimePickerFragment.this,
-                        now.get(Calendar.HOUR_OF_DAY),
-                        now.get(Calendar.MINUTE),
-                        mode24Hours.isChecked()
-                );
-                tpd.setThemeDark(modeDarkTime.isChecked());
-                tpd.vibrate(vibrateTime.isChecked());
-                tpd.dismissOnPause(dismissTime.isChecked());
-                tpd.enableSeconds(enableSeconds.isChecked());
-                tpd.setVersion(showVersion2.isChecked() ? TimePickerDialog.Version.VERSION_2 : TimePickerDialog.Version.VERSION_1);
-                if (modeCustomAccentTime.isChecked()) {
-                    tpd.setAccentColor(Color.parseColor("#9C27B0"));
-                }
-                if (titleTime.isChecked()) {
-                    tpd.setTitle("TimePicker Title");
-                }
-                if (limitSelectableTimes.isChecked()) {
-                    if (enableSeconds.isChecked()) {
-                        tpd.setTimeInterval(3, 5, 10);
-                    } else {
-                        tpd.setTimeInterval(3, 5, 60);
-                    }
-                }
-                if (disableSpecificTimes.isChecked()) {
-                    Timepoint[] disabledTimes = {
-                            new Timepoint(10),
-                            new Timepoint(10, 30),
-                            new Timepoint(11),
-                            new Timepoint(12, 30)
-                    };
-                    tpd.setDisabledTimes(disabledTimes);
-                }
-                tpd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-                        Log.d("TimePicker", "Dialog was cancelled");
-                    }
-                });
-                tpd.show(getFragmentManager(), "Timepickerdialog");
+            public void onCancel(DialogInterface dialogInterface) {
+                Log.d("TimePicker", "Dialog was cancelled");
             }
         });
+        tpd.show(getFragmentManager(), "Timepickerdialog");
 
         return view;
     }
@@ -124,7 +112,110 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
         String minuteString = minute < 10 ? "0"+minute : ""+minute;
         String secondString = second < 10 ? "0"+second : ""+second;
         String time = "You picked the following time: "+hourString+"h"+minuteString+"m"+secondString+"s";
-        timeTextView.setText(time);
+
+        bundle.putInt("hour", hourOfDay);
+        bundle.putInt("minutes", minute);
+
+        addPlaceDialog.setTitle("Lugar");
+        placeSpinner.setSelection(1);
+        addPlaceDialog.show();
+    }
+
+    private void initDialog(View thisFragment, LayoutInflater inflater) {
+        addPlaceDialog = new AlertDialog.Builder(thisFragment.getContext());
+        view = inflater.inflate(R.layout.dialog_place_selector,null);
+
+        ButterKnife.bind(this, view);
+
+        addPlaceDialog.setView(view);
+
+        this.populatePlaceSpinner(view);
+
+        addPlaceDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String placeSelected = placeSpinner.getSelectedItem().toString();
+                Place place = null;
+                try {
+                    place = placesDao.queryForEq("name", placeSelected).get(0);
+                } catch (SQLException e) {
+                    Log.d("TimePickerFragment: ", "Cannot find place: " + placeSelected + "in database");
+                    e.printStackTrace();
+                }
+
+                Event newEvent = new Event();
+                String minuteString = bundle.getInt("minutes") < 10 ? "0"+bundle.getInt("minutes") : ""+
+                        bundle.getInt("minutes");
+
+                String eventName = bundle.getInt("day") + "/" +
+                        bundle.getInt("month") + "/" +
+                        bundle.getInt("year") + " - " +
+                        bundle.getInt("hour") + ":" +
+                        minuteString + " hs. - " +
+                        placeSelected;
+
+                newEvent.setName(eventName);
+                newEvent.setYear(bundle.getInt("year"));
+                newEvent.setMonth(bundle.getInt("month"));
+                newEvent.setDay(bundle.getInt("day"));
+                newEvent.setHour(bundle.getInt("hour"));
+                newEvent.setMinutes(bundle.getInt("minutes"));
+                newEvent.setPlace(place);
+
+                Snackbar snackbar;
+                try {
+                    eventsDao.create(newEvent);
+                    snackbar = Snackbar.make(getView(), "Evento: " + eventName + " guardado!",
+                            Snackbar.LENGTH_LONG);
+                    snackbar.setActionTextColor(Color.GREEN);
+                    snackbar.show();
+                    Log.d("TimePickerFragment: ", "Evento: " + eventName + " guardado!");
+                } catch (SQLException e) {
+                    Log.d("TimePickerFragment: ", "El evento: " + eventName + "no se pudo guardar!");
+                    e.printStackTrace();
+                    snackbar = Snackbar.make(getView(), "El evento: " + eventName + "no se pudo guardar!",
+                            Snackbar.LENGTH_LONG);
+                    snackbar.setActionTextColor(Color.RED);
+                    snackbar.show();
+                }
+
+                dialog.dismiss();
+
+                ManageFragmentsNavigation.navItemIndex = 0;
+                ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_EVENT_TYPES;
+
+                // update the main content by replacing fragments
+                Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
+    }
+
+    private void populatePlaceSpinner(View view) {
+        //get attendees types to put into spinner
+        ArrayList<String> list = getPlacesFromDatabase();
+
+        dataAdapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        placeSpinner.setAdapter(dataAdapter);
+    }
+
+    private ArrayList<String> getPlacesFromDatabase() {
+        List<Place> placesList = null;
+        try {
+            placesList = placesDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<String> list = new ArrayList<String>();
+        for(Place place : placesList){
+            list.add(place.getName());
+        }
+        return list;
     }
 
 }
