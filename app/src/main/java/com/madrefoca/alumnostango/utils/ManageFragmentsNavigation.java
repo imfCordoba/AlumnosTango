@@ -3,6 +3,7 @@ package com.madrefoca.alumnostango.utils;
 
 import android.app.Fragment;
 
+import com.madrefoca.alumnostango.fragments.AttendeeEventPaymentFragment;
 import com.madrefoca.alumnostango.fragments.AttendeeTypesFragment;
 import com.madrefoca.alumnostango.fragments.AttendeesFragment;
 import com.madrefoca.alumnostango.fragments.CouponsFragment;
@@ -13,6 +14,7 @@ import com.madrefoca.alumnostango.fragments.NotificationsFragment;
 import com.madrefoca.alumnostango.fragments.PaymentsFragment;
 import com.madrefoca.alumnostango.fragments.PlacesFragment;
 import com.madrefoca.alumnostango.fragments.SettingsFragment;
+import com.madrefoca.alumnostango.model.AttendeeEventPayment;
 
 /**
  * Created by fernando on 23/09/17.
@@ -37,6 +39,8 @@ public class ManageFragmentsNavigation {
     public static final String TAG_SETTINGS = "settings";
     public static final String TAG_ABOUTUS = "aboutUs";
     public static String CURRENT_TAG = TAG_HOME;
+    public static final String TAG_ATTENDEE_EVENT_PAYMENT = "attendeeEventPayment";
+
     // TODO: 24/09/17 cambiar la forma de asignar los numeros a los fragments
     public static Fragment getHomeFragment() {
         switch (navItemIndex) {
@@ -70,6 +74,9 @@ public class ManageFragmentsNavigation {
             case 9:
                 EventTypesFragment eventTypesFragment = new EventTypesFragment();
                 return eventTypesFragment;
+            case 10:
+                AttendeeEventPaymentFragment attendeeEventPaymentFragment = new AttendeeEventPaymentFragment();
+                return attendeeEventPaymentFragment;
             default:
                 return new HomeFragment();
         }

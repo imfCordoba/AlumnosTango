@@ -121,7 +121,7 @@ public class EventsFragment extends Fragment {
         eventsRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
         eventsRecyclerView.setLayoutManager(layoutManager);
-        eventsListAdapter = new EventsDataAdapter(eventsList);
+        eventsListAdapter = new EventsDataAdapter(eventsList, thisFragment.getContext());
         eventsRecyclerView.setAdapter(eventsListAdapter);
 
     }

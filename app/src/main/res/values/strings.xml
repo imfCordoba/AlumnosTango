@@ -71,4 +71,7 @@
     <string name="tab_title_time">Time</string>
     <string name="tab_title_date">Date</string>
     <string name="tab_title_datetime">Date+Time</string>
+
+    <string name="speech_prompt">Mencione el alumno</string>
+    <string name="speech_not_supported">Disculpas! Su dispositivo no soporta busqueda por voz</string>
 </resources>

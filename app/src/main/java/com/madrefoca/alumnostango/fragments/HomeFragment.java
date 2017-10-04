@@ -120,7 +120,7 @@ public class HomeFragment extends Fragment {
         eventsPaymentsRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(thisFragment.getContext());
         eventsPaymentsRecyclerView.setLayoutManager(layoutManager);
-        eventsListAdapter = new EventsDataAdapter(eventsList);
+        eventsListAdapter = new EventsDataAdapter(eventsList, thisFragment.getContext());
         eventsPaymentsRecyclerView.setAdapter(eventsListAdapter);
     }
 
