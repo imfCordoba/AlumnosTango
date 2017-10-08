@@ -277,6 +277,7 @@ public class AttendeesFragment extends Fragment {
                         attendee = new Attendee();
                         attendee.setName(attendeeName.getText().toString());
                         attendee.setLastName(attendeeLastName.getText().toString());
+                        attendee.setAlias();
                         attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
                         attendee.setCellphoneNumber(Integer.parseInt(attendeePhone.getText().toString()));
                         attendee.setFacebookProfile(attendeeFacebook.getText().toString());
@@ -289,6 +290,7 @@ public class AttendeesFragment extends Fragment {
                         attendee = attendeeDao.queryForId(Integer.parseInt(attendeeId.getText().toString()));
                         attendee.setName(attendeeName.getText().toString());
                         attendee.setLastName(attendeeLastName.getText().toString());
+                        attendee.setAlias();
                         attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
                         attendee.setCellphoneNumber(Integer.parseInt(attendeePhone.getText().toString()));
                         attendee.setFacebookProfile(attendeeFacebook.getText().toString());

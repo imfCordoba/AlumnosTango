@@ -33,6 +33,9 @@ public class Attendee {
     @DatabaseField
     private String email;
 
+    @DatabaseField
+    private String alias;
+
     public Attendee() {
 
     }
@@ -121,5 +124,13 @@ public class Attendee {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias() {
+        this.alias = this.getName() + " " + this.getLastName();
     }
 }
