@@ -1,0 +1,122 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.madrefoca.alumnostango.fragments.EventAccountsFragment">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="6">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <!-- Editext for Search -->
+            <EditText
+                android:id="@+id/payment_input_Search"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="Buscar pago..." />
+
+            <!-- List View -->
+            <ListView
+                android:id="@+id/payments_list_view"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
+
+            <GridLayout
+                android:id="@+id/GridLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="2">
+
+                <GridLayout
+                    android:id="@+id/GridLayoutTotalCash"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:columnCount="2"
+                    android:rowCount="1">
+
+                    <TextView
+                        android:id="@+id/total_cash_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_row="0"
+                        android:labelFor="@+id/total_cash"
+                        android:text="Monto en efectivo: " />
+
+                    <EditText
+                        android:id="@+id/total_cash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_row="0"
+                        android:inputType="numberDecimal" />
+
+                </GridLayout>
+
+                <GridLayout
+                    android:id="@+id/GridLayoutAmountCoupons"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:layout_row="1"
+                    android:columnCount="2"
+                    android:rowCount="1">
+
+                    <TextView
+                        android:id="@+id/total_coupons_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_row="0"
+                        android:labelFor="@+id/total_coupons"
+                        android:text="Total en cupones: " />
+
+                    <EditText
+                        android:id="@+id/total_coupons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_row="0"
+                        android:inputType="numberDecimal" />
+
+                </GridLayout>
+
+
+            </GridLayout>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fabAddPaymentView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/fab_add"
+                fab:fab_label="Añadir pagos"
+                fab:menu_backgroundColor="#ccffffff" />
+
+        </android.support.design.widget.CoordinatorLayout>
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -42,7 +42,7 @@ public class DatePickerFragment extends Fragment implements DatePickerDialog.OnD
         dpd.dismissOnPause(true);
         dpd.showYearPickerFirst(true);
         dpd.setVersion(true ? DatePickerDialog.Version.VERSION_2 : DatePickerDialog.Version.VERSION_1);
-        dpd.setAccentColor(Color.parseColor("#9C27B0"));
+        dpd.setAccentColor(getResources().getColor(R.color.colorPrimary));
         dpd.setTitle("Fecha de la clase");
 
         if (true) {

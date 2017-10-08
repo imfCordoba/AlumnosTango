@@ -94,6 +94,7 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
                 Log.d("TimePicker", "Dialog was cancelled");
             }
         });
+        tpd.setAccentColor(getResources().getColor(R.color.colorPrimary));
         tpd.show(getFragmentManager(), "Timepickerdialog");
 
         return view;
