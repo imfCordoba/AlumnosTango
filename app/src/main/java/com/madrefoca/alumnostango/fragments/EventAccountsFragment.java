@@ -130,6 +130,12 @@ public class EventAccountsFragment extends Fragment {
         eventAccountsRecyclerView.setLayoutManager(new LinearLayoutManager(thisFragment.getContext()));
         eventAccountsAdapter = new EventAccountsAdapter(attendeePaymentRowArrayList);
         eventAccountsRecyclerView.setAdapter(eventAccountsAdapter);
+
+        this.calculateTotalCash();
+    }
+
+    private void calculateTotalCash() {
+
     }
 
     @Optional
