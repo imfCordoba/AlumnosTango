@@ -33,6 +33,8 @@ public class EventAccountsAdapter extends RecyclerView.Adapter<EventAccountsAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.textViewName.setText(attendeePaymentRowArrayList.get(position).getAttendee().getAlias());
+        holder.amountCardView.setText("$ " + attendeePaymentRowArrayList.get(position).getPayment()
+                .getAmount().toString());
     }
 
     @Override
@@ -43,11 +45,12 @@ public class EventAccountsAdapter extends RecyclerView.Adapter<EventAccountsAdap
     class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView textViewName;
+        TextView amountCardView;
 
         ViewHolder(View itemView) {
             super(itemView);
-
-            textViewName = (TextView) itemView.findViewById(R.id.textViewName);
+            textViewName = (TextView) itemView.findViewById(R.id.attendee_name_cardview);
+            amountCardView = (TextView) itemView.findViewById(R.id.amount_cardview);
         }
     }
 

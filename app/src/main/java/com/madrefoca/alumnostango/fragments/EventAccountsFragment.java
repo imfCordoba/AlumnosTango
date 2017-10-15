@@ -60,6 +60,10 @@ public class EventAccountsFragment extends Fragment {
     @BindView(R.id.payment_input_Search)
     EditText paymentInputSearch;
 
+    @Nullable
+    @BindView(R.id.total_cash)
+    EditText totalCash;
+
     EventAccountsAdapter eventAccountsAdapter;
 
 
@@ -135,7 +139,11 @@ public class EventAccountsFragment extends Fragment {
     }
 
     private void calculateTotalCash() {
-
+        Double parcialTotalCash = 0.0;
+        for(AttendeePaymentRow attendeePaymentRow : attendeePaymentRowArrayList) {
+            parcialTotalCash+= attendeePaymentRow.getPayment().getAmount();
+        }
+        totalCash.setText(parcialTotalCash.toString());
     }
 
     @Optional

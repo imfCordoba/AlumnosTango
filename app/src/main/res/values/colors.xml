@@ -3,6 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="year">#999999</color>
+    <color name="title">#222222</color>
 
     <!-- Background colors for LetterTileDrawables. This set of colors is a subset of
         https://spec.googleplex.com/quantumpalette#extended which passes Google Accessibility
