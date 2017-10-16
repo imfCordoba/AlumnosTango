@@ -7,7 +7,7 @@
     <string name="closeDrawer">close_drawer</string>
 
     <!-- Navigation Drawer menu labels -->
-    <string name="nav_home">Inicio</string>
+    <string name="nav_home">Eventos</string>
     <string name="nav_attendees">Asistentes</string>
     <string name="nav_events">Clases</string>
     <string name="nav_places">Lugares</string>
@@ -19,9 +19,8 @@
 
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
-        <item>Inicio</item>
+        <item>Eventos</item>
         <item>Asistentes</item>
-        <item>Clases</item>
         <item>Lugares</item>
         <item>Pagos</item>
         <item>Cupones</item>

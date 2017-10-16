@@ -1,52 +1,100 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.madrefoca.alumnostango.fragments.HomeFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/eventsPaymentsRecyclerView"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-
-
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/menu_red"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        fab:menu_labels_ellipsize="end"
-        fab:menu_labels_singleLine="true"
-        fab:menu_backgroundColor="#ccffffff">
+        android:orientation="vertical"
+        android:weightSum="8">
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabPaymentsEventTypes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/fab_add"
-            fab:fab_label="Tipos de eventos"
-            fab:fab_size="mini" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabAddPaymentsEvent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/fab_add"
-            fab:fab_label="Nuevo evento"
-            fab:fab_size="mini" />
+            <EditText
+                android:id="@+id/eventSearch"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="Buscar evento..."
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_constraintLeft_creator="1"
+                tools:layout_constraintRight_creator="1"
+                tools:layout_constraintTop_creator="1" />
 
-    </com.github.clans.fab.FloatingActionMenu>
+        </LinearLayout>
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/eventsPaymentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                tools:layout_constraintBottom_creator="1"
+                tools:layout_constraintLeft_creator="1"
+                tools:layout_constraintRight_creator="1"
+                tools:layout_constraintTop_creator="1">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <com.github.clans.fab.FloatingActionMenu
+                android:id="@+id/menu_red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                fab:menu_backgroundColor="#ccffffff"
+                fab:menu_labels_ellipsize="end"
+                fab:menu_labels_singleLine="true">
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/fabPaymentsEventTypes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/fab_add"
+                    fab:fab_label="Tipos de evento"
+                    fab:fab_size="mini" />
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/fabAddPaymentsEvent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/fab_add"
+                    fab:fab_label="Nuevo evento"
+                    fab:fab_size="mini" />
+
+            </com.github.clans.fab.FloatingActionMenu>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
