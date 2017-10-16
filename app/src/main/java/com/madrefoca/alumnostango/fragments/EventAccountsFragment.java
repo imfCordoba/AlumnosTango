@@ -8,6 +8,7 @@ import android.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ import com.madrefoca.alumnostango.model.AttendeeEventPayment;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.model.Payment;
 import com.madrefoca.alumnostango.utils.AttendeePaymentRow;
+import com.madrefoca.alumnostango.utils.AttendeesSimpleCallback;
+import com.madrefoca.alumnostango.utils.EventAccountsSimpleCallback;
 import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 
 import java.sql.SQLException;
@@ -105,6 +108,7 @@ public class EventAccountsFragment extends Fragment {
         }
 
         this.initView(thisFragment);
+        this.initSwipe(thisFragment);
 
         return thisFragment;
     }
@@ -138,12 +142,21 @@ public class EventAccountsFragment extends Fragment {
         this.calculateTotalCash();
     }
 
+    private void initSwipe(View thisFragment) {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new EventAccountsSimpleCallback(0,
+                ItemTouchHelper.LEFT, thisFragment.getContext(), attendeePaymentRowArrayList,
+                eventAccountsAdapter, thisFragment);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(eventAccountsRecyclerView);
+    }
+
     private void calculateTotalCash() {
-        Double parcialTotalCash = 0.0;
+        Double partialTotalCash = 0.0;
         for(AttendeePaymentRow attendeePaymentRow : attendeePaymentRowArrayList) {
-            parcialTotalCash+= attendeePaymentRow.getPayment().getAmount();
+            partialTotalCash+= attendeePaymentRow.getPayment().getAmount();
         }
-        totalCash.setText(parcialTotalCash.toString());
+        totalCash.setText(partialTotalCash.toString());
     }
 
     @Optional

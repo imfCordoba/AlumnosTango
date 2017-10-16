@@ -54,6 +54,20 @@ public class EventAccountsAdapter extends RecyclerView.Adapter<EventAccountsAdap
         }
     }
 
+    public void removeItem(int position) {
+        attendeePaymentRowArrayList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, attendeePaymentRowArrayList.size());
+    }
+
+    public Double calculateTotalCash() {
+        Double partialTotalCash = 0.0;
+        for(AttendeePaymentRow attendeePaymentRow : attendeePaymentRowArrayList) {
+            partialTotalCash+= attendeePaymentRow.getPayment().getAmount();
+        }
+        return partialTotalCash;
+    }
+
     //This method will filter the list
     //here we are passing the filtered data
     //and assigning it to the list with notifydatasetchanged method
