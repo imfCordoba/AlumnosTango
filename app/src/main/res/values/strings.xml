@@ -9,7 +9,6 @@
     <!-- Navigation Drawer menu labels -->
     <string name="nav_home">Eventos</string>
     <string name="nav_attendees">Asistentes</string>
-    <string name="nav_events">Clases</string>
     <string name="nav_places">Lugares</string>
     <string name="nav_payments">Pagos</string>
     <string name="nav_coupons">Cupones</string>

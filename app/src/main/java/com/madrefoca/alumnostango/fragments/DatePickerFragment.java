@@ -90,7 +90,7 @@ public class DatePickerFragment extends Fragment implements DatePickerDialog.OnD
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
         fragmentTransaction.commitAllowingStateLoss();
         //dateTextView.setText(date);
     }

@@ -11,10 +11,6 @@
             android:icon="@mipmap/ic_account_box_black_24dp"
             android:title="@string/nav_attendees" />
         <item
-            android:id="@+id/nav_events"
-            android:icon="@mipmap/ic_event_black_24dp"
-            android:title="Clases" />
-        <item
             android:id="@+id/nav_places"
             android:icon="@mipmap/ic_place_black_24dp"
             android:title="Lugares" />

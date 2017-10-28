@@ -73,8 +73,7 @@ public class EventsDataAdapter extends RecyclerView.Adapter<EventsDataAdapter.Vi
         @Override
         public void onClick(View view) {
             Log.d("EventDataAdapter", "onClick " + eventsList.get(getPosition()).getName()+ " " + eventsList.get(getPosition()).getIdEvent());
-            ManageFragmentsNavigation.navItemIndex = 10;
-            ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEE_EVENT_PAYMENT;
+            ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_ATTENDEE_EVENT_PAYMENT);
 
             Bundle bundle = new Bundle();
             bundle.putInt("eventId", eventsList.get(getPosition()).getIdEvent());
@@ -84,7 +83,7 @@ public class EventsDataAdapter extends RecyclerView.Adapter<EventsDataAdapter.Vi
             fragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = ((Activity) context).getFragmentManager().beginTransaction();
 
-            fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+            fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
             fragmentTransaction.commitAllowingStateLoss();
         }
     }

@@ -134,13 +134,12 @@ public class AttendeesFragment extends Fragment {
     @Optional
     @OnClick(R.id.fabAttendeeTypes)
     public void onClickDisplayAttendeeTypesFragment() {
-        ManageFragmentsNavigation.navItemIndex = 8;
-        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEE_TYPES;
+        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_ATTENDEE_TYPES);
 
         // update the main content by replacing fragments
         Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
         fragmentTransaction.commitAllowingStateLoss();
     }
 

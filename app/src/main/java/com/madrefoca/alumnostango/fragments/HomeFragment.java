@@ -139,23 +139,20 @@ public class HomeFragment extends Fragment {
         Fragment fragment = new DatePickerFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
         fragmentTransaction.commitAllowingStateLoss();
-
-
     }
 
     @Optional
     @OnClick(R.id.fabPaymentsEventTypes)
     public void onClickDisplayEventTypesFragment() {
-        ManageFragmentsNavigation.navItemIndex = 9;
-        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_EVENT_TYPES;
+        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_EVENT_TYPES);
 
         // update the main content by replacing fragments
         Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
         fragmentTransaction.commitAllowingStateLoss();
     }
 

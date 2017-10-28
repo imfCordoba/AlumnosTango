@@ -297,11 +297,10 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                 dialog.dismiss();
 
                 //return to the origin fragment
-                ManageFragmentsNavigation.navItemIndex = 1;
-                ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEES;
+                ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_ATTENDEES);
                 Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
                 FragmentTransaction fragmentTransaction = ((Activity) context).getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
                 fragmentTransaction.commitAllowingStateLoss();
 
             }

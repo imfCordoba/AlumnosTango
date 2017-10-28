@@ -182,14 +182,13 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
 
                 dialog.dismiss();
 
-                ManageFragmentsNavigation.navItemIndex = 0;
-                ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_EVENT_TYPES;
+                ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_HOME);
 
                 // update the main content by replacing fragments
                 Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
                 fragmentTransaction.commitAllowingStateLoss();
             }
         });

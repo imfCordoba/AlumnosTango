@@ -26,6 +26,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.code.findbugs'
     })
     compile("com.j256.ormlite:ormlite-core:${ormlite_version}")
     compile("com.j256.ormlite:ormlite-jdbc:${ormlite_version}")
@@ -42,6 +43,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.wdullaer:materialdatetimepicker:3.3.0'
+    compile 'com.google.guava:guava:23.3-android'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }

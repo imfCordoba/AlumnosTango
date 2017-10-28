@@ -162,16 +162,13 @@ public class EventAccountsFragment extends Fragment {
     @Optional
     @OnClick(R.id.fabAddPaymentView)
     public void onClickFabAddPaymentView() {
-
-        ManageFragmentsNavigation.navItemIndex = 11;
-        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEE_EVENT_PAYMENT;
-
+        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_ATTENDEE_EVENT_PAYMENT);
         // update the main content by replacing fragments
         Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+        fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
         fragmentTransaction.commitAllowingStateLoss();
 
     }

@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity{
 
         if (savedInstanceState == null) {
             setUpNavigationView();
-            ManageFragmentsNavigation.navItemIndex = 0;
-            ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_HOME;
+            ManageFragmentsNavigation.navItemTag = ManageFragmentsNavigation.TAG_HOME;
             loadHomeFragment();
         }
 
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity{
 
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
-        if (getSupportFragmentManager().findFragmentByTag(ManageFragmentsNavigation.CURRENT_TAG) != null) {
+        if (getSupportFragmentManager().findFragmentByTag(ManageFragmentsNavigation.navItemTag) != null) {
             drawer.closeDrawers();
             return;
         }
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity{
                 // update the main content by replacing fragments
                 Fragment fragment = ManageFragmentsNavigation.getHomeFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
+                fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.navItemTag);
                 fragmentTransaction.commitAllowingStateLoss();
             }
         };
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity{
 
 
     private void setToolbarTitle() {
-        getSupportActionBar().setTitle(activityTitles[ManageFragmentsNavigation.navItemIndex]);
+        getSupportActionBar().setTitle(ManageFragmentsNavigation.navItemTag);
     }
 
     private void selectNavMenu() {
@@ -127,45 +126,31 @@ public class MainActivity extends AppCompatActivity{
                 switch (menuItem.getItemId()) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.nav_home:
-                        ManageFragmentsNavigation.navItemIndex = 0;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_HOME;
+                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_HOME);
                         break;
                     case R.id.nav_attendees:
-                        ManageFragmentsNavigation.navItemIndex = 1;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_ATTENDEES;
-                        break;
-                    case R.id.nav_events:
-                        ManageFragmentsNavigation.navItemIndex = 2;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_EVENTS;
+                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_ATTENDEES);
                         break;
                     case R.id.nav_places:
-                        ManageFragmentsNavigation.navItemIndex = 3;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_PLACES;
+                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_PLACES);
                         break;
                     case R.id.nav_payments:
-                        ManageFragmentsNavigation.navItemIndex = 4;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_PAYMENTS;
+                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_PAYMENTS);
                         break;
                     case R.id.nav_coupons:
-                        ManageFragmentsNavigation.navItemIndex = 5;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_COUPONS;
+                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_COUPONS);
                         break;
                     case R.id.nav_notification:
-                        ManageFragmentsNavigation.navItemIndex = 6;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_NOTIFICATIONS;
+                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_NOTIFICATIONS);
                         break;
                     case R.id.nav_settings:
-                        ManageFragmentsNavigation.navItemIndex = 7;
-                        ManageFragmentsNavigation.CURRENT_TAG = ManageFragmentsNavigation.TAG_SETTINGS;
+                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_SETTINGS);
                         break;
-
                     case R.id.nav_aboutUs:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
                         drawer.closeDrawers();
                         return true;
-                    default:
-                        ManageFragmentsNavigation.navItemIndex = 0;
                 }
 
                 //Checking if the item is in checked state or not, if not make it in checked state
