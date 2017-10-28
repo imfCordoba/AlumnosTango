@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.model.Attendee;
+import com.madrefoca.alumnostango.utils.AttendeePaymentRow;
 
 import java.util.ArrayList;
 
@@ -60,5 +61,13 @@ public class AttendeesDataAdapter extends RecyclerView.Adapter{
 
             attendeeName = (TextView)view.findViewById(R.id.attendee_name);
         }
+    }
+
+    //This method will filter the list
+    //here we are passing the filtered data
+    //and assigning it to the list with notifydatasetchanged method
+    public void filterList(ArrayList<Attendee> filterdAttendeesList) {
+        this.attendeesList = filterdAttendeesList;
+        notifyDataSetChanged();
     }
 }

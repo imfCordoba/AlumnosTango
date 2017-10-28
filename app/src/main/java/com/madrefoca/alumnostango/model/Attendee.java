@@ -36,6 +36,9 @@ public class Attendee {
     @DatabaseField
     private String alias;
 
+    @DatabaseField
+    private String state;
+
     public Attendee() {
 
     }
@@ -132,5 +135,13 @@ public class Attendee {
 
     public void setAlias() {
         this.alias = this.getName() + " " + this.getLastName();
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

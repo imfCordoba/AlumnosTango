@@ -182,7 +182,10 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    attendeeDao.deleteById(attendeesList.get(position).getAttendeeId());
+                    //No se borra se pasa a un estado de inactivo para no romper los pagos en clases
+                    Attendee attendee = attendeeDao.queryForId(attendeesList.get(position).getAttendeeId());
+                    attendee.setState("inactive");
+                    attendeeDao.update(attendee);
                     Log.d("AttendeeFragment: ", "Attendee: " + attendeesList.get(position).getName() +" "+
                             attendeesList.get(position).getLastName() + ", with id: " +
                             attendeesList.get(position).getAttendeeId() + " was deleted frm database.");
@@ -265,6 +268,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                         attendee.setFacebookProfile(attendeeFacebook.getText().toString());
                         attendee.setEmail(attendeeEmail.getText().toString());
                         attendee.setAttendeeType(attendeeType);
+                        attendee.setState("active");
 
                         attendeeDao.create(attendee);
                         Log.d("AttendeeFragment: ", "Saved attendee: " + attendee.getName() +" "+ attendee.getLastName());
@@ -353,7 +357,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
         attendeePhone.setText("");
         attendeeFacebook.setText("");
         attendeeEmail.setText("");
-        attendeeTypesSpinner.setSelection(1);
+        attendeeTypesSpinner.setSelection(0);
         addEditAttendeeDialog.show();
     }
 }
