@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.adapters.EventsDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
+import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.model.EventType;
 import com.madrefoca.alumnostango.utils.HomeSimpleCallback;
@@ -31,6 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import butterknife.Optional;
 
 /**
@@ -154,6 +157,34 @@ public class HomeFragment extends Fragment {
 
         fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
         fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    @OnTextChanged(value = R.id.eventSearch,
+            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void afterAttendeeInputSearch(Editable editable) {
+        //after the change calling the method and passing the search input
+        filter(editable.toString());
+    }
+
+    private void filter(String text) {
+        //new array list that will hold the filtered data
+        ArrayList<Event> filterdEventList = new ArrayList<>();
+
+        if(text.isEmpty() || text == "") {
+            filterdEventList.addAll(eventsList);
+        } else {
+            //looping through existing elements
+            for (Event event : eventsList) {
+                //if the existing elements contains the search input
+                if (event.getName().contains(text)) {
+                    //adding the element to filtered list
+                    filterdEventList.add(event);
+                }
+            }
+        }
+
+        //calling a method of the adapter class and passing the filtered list
+        eventsListAdapter.filterList(filterdEventList);
     }
 
 }

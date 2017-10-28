@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.madrefoca.alumnostango.R;
+import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 
@@ -86,5 +87,13 @@ public class EventsDataAdapter extends RecyclerView.Adapter<EventsDataAdapter.Vi
             fragmentTransaction.replace(R.id.frame, fragment, ManageFragmentsNavigation.CURRENT_TAG);
             fragmentTransaction.commitAllowingStateLoss();
         }
+    }
+
+    //This method will filter the list
+    //here we are passing the filtered data
+    //and assigning it to the list with notifydatasetchanged method
+    public void filterList(ArrayList<Event> filteredEventList) {
+        this.eventsList = filteredEventList;
+        notifyDataSetChanged();
     }
 }

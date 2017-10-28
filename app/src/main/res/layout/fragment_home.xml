@@ -13,11 +13,10 @@
         android:orientation="vertical"
         android:weightSum="8">
 
-        <LinearLayout
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <EditText
                 android:id="@+id/eventSearch"
@@ -36,11 +35,11 @@
                 tools:layout_constraintRight_creator="1"
                 tools:layout_constraintTop_creator="1" />
 
-        </LinearLayout>
+        </android.support.design.widget.CoordinatorLayout>
 
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="7">
 
             <android.support.v7.widget.RecyclerView
@@ -52,16 +51,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintVertical_bias="1.0"
-                tools:layout_constraintBottom_creator="1"
-                tools:layout_constraintLeft_creator="1"
-                tools:layout_constraintRight_creator="1"
-                tools:layout_constraintTop_creator="1">
+                android:layout_marginTop="8dp">
 
             </android.support.v7.widget.RecyclerView>
 
