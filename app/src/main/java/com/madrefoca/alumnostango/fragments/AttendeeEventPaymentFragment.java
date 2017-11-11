@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -94,10 +95,12 @@ public class AttendeeEventPaymentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View thisFragment = inflater.inflate(R.layout.fragment_attendee_event_payment, container, false);
 
+        // TODO: 11/11/17 Hacer que cuando un alumno paga el evento, ya no se liste en la lista de alumnos para que sea mas facil seleccionarlos.
+
         bundle = new Bundle();
         this.bundle = this.getArguments();
 
-        ButterKnife.bind(this, thisFragment);
+        ButterKnife.bind(this, thisFragment);((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.nav_attendee_event_payments);
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 

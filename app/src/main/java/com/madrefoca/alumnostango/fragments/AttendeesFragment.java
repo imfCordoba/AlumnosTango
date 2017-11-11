@@ -22,7 +22,6 @@ import com.madrefoca.alumnostango.adapters.AttendeesDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeType;
-import com.madrefoca.alumnostango.utils.AttendeePaymentRow;
 import com.madrefoca.alumnostango.utils.AttendeesSimpleCallback;
 import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 

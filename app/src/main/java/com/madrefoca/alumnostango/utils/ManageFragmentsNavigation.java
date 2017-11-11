@@ -40,18 +40,18 @@ public class ManageFragmentsNavigation {
 
 
     // tags used to attach the fragments
-    public static final String TAG_HOME = "home";
-    public static final String TAG_ATTENDEES = "attendees";
-    public static final String TAG_ATTENDEE_TYPES = "attendeeTypes";
-    public static final String TAG_EVENT_TYPES = "eventTypes";
-    public static final String TAG_PLACES = "places";
-    public static final String TAG_PAYMENTS = "payments";
-    public static final String TAG_COUPONS = "coupons";
-    public static final String TAG_NOTIFICATIONS= "notifications";
-    public static final String TAG_SETTINGS = "settings";
-    public static final String TAG_ABOUTUS = "aboutUs";
-    public static final String TAG_ATTENDEE_EVENT_PAYMENT = "attendeeEventPayment";
-    public static final String TAG_EVENT_ACCOUNTS = "eventAccounts";
+    public static final String TAG_HOME = "Inicio";
+    public static final String TAG_ATTENDEES = "Asistentes";
+    public static final String TAG_ATTENDEE_TYPES = "Tipos de asistentes";
+    public static final String TAG_EVENT_TYPES = "Tipos de evento";
+    public static final String TAG_PLACES = "Lugares";
+    public static final String TAG_PAYMENTS = "Pagos";
+    public static final String TAG_COUPONS = "Cupones";
+    public static final String TAG_NOTIFICATIONS= "Notificaciones";
+    public static final String TAG_SETTINGS = "Configuración";
+    public static final String TAG_ABOUTUS = "Acerca de nosotros";
+    public static final String TAG_ATTENDEE_EVENT_PAYMENT = "Pagos del evento";
+    public static final String TAG_EVENT_ACCOUNTS = "Cuentas";
 
     public static String navItemTag = TAG_HOME;
 

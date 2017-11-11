@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -95,6 +96,8 @@ public class EventAccountsFragment extends Fragment {
         this.bundle = this.getArguments();
 
         ButterKnife.bind(this, thisFragment);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.nav_event_accounts);
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 

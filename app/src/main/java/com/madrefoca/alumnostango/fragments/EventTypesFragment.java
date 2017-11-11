@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -82,6 +83,8 @@ public class EventTypesFragment extends Fragment {
         View thisFragment = inflater.inflate(R.layout.fragment_event_types, container, false);
 
         ButterKnife.bind(this, thisFragment);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.nav_event_types);
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 

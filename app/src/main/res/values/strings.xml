@@ -9,6 +9,10 @@
     <!-- Navigation Drawer menu labels -->
     <string name="nav_home">Eventos</string>
     <string name="nav_attendees">Asistentes</string>
+    <string name="nav_attendees_types">Tipos de asistente</string>
+    <string name="nav_event_types">Tipos de evento</string>
+    <string name="nav_event_accounts">Cuentas del evento</string>
+    <string name="nav_attendee_event_payments">Pagos del evento</string>
     <string name="nav_places">Lugares</string>
     <string name="nav_payments">Pagos</string>
     <string name="nav_coupons">Cupones</string>
@@ -72,4 +76,5 @@
 
     <string name="speech_prompt">Mencione el alumno</string>
     <string name="speech_not_supported">Disculpas! Su dispositivo no soporta busqueda por voz</string>
+
 </resources>
