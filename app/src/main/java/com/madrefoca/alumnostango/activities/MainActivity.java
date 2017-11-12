@@ -23,9 +23,6 @@ public class MainActivity extends AppCompatActivity{
     private DrawerLayout drawer;
     private Toolbar toolbar;
 
-    // toolbar titles respected to selected nav menu item
-    private String[] activityTitles;
-
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
@@ -40,12 +37,6 @@ public class MainActivity extends AppCompatActivity{
         mHandler = new Handler();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-
-        // load toolbar titles from string resources
-        activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-        // initializing navigation menu
-
 
         if (savedInstanceState == null) {
             setUpNavigationView();

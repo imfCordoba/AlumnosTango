@@ -38,25 +38,22 @@ public class ManageFragmentsNavigation {
     public static int eventAccountsIndex = 9;
     public static int attendeeEventPaymentIndex = 10;
 
-
     // tags used to attach the fragments
     public static final String TAG_HOME = "Inicio";
     public static final String TAG_ATTENDEES = "Asistentes";
     public static final String TAG_ATTENDEE_TYPES = "Tipos de asistentes";
     public static final String TAG_EVENT_TYPES = "Tipos de evento";
     public static final String TAG_PLACES = "Lugares";
-    public static final String TAG_PAYMENTS = "Pagos";
+    public static final String TAG_PAYMENTS = "Eventos y pagos";
     public static final String TAG_COUPONS = "Cupones";
     public static final String TAG_NOTIFICATIONS= "Notificaciones";
     public static final String TAG_SETTINGS = "Configuración";
     public static final String TAG_ABOUTUS = "Acerca de nosotros";
     public static final String TAG_ATTENDEE_EVENT_PAYMENT = "Pagos del evento";
-    public static final String TAG_EVENT_ACCOUNTS = "Cuentas";
+    public static final String TAG_EVENT_ACCOUNTS = "Cuentas del evento";
 
     public static String navItemTag = TAG_HOME;
 
-
-    // TODO: 24/09/17 cambiar la forma de asignar los numeros a los fragments
     public static Fragment getHomeFragment() {
         switch (navItemTag) {
             case TAG_HOME:

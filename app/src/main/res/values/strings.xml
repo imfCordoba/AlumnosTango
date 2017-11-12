@@ -7,32 +7,18 @@
     <string name="closeDrawer">close_drawer</string>
 
     <!-- Navigation Drawer menu labels -->
-    <string name="nav_home">Eventos</string>
+    <string name="nav_home">Inicio</string>
     <string name="nav_attendees">Asistentes</string>
     <string name="nav_attendees_types">Tipos de asistente</string>
     <string name="nav_event_types">Tipos de evento</string>
     <string name="nav_event_accounts">Cuentas del evento</string>
     <string name="nav_attendee_event_payments">Pagos del evento</string>
     <string name="nav_places">Lugares</string>
-    <string name="nav_payments">Pagos</string>
+    <string name="nav_payments">Eventos y pagos</string>
     <string name="nav_coupons">Cupones</string>
     <string name="nav_notifications">Notificaciones</string>
     <string name="nav_configurations">Configuraciones</string>
     <string name="nav_about_us">Acerca de nosotros</string>
-
-    <!-- Toolbar titles when navigation menu item is selected -->
-    <string-array name="nav_item_activity_titles">
-        <item>Eventos</item>
-        <item>Asistentes</item>
-        <item>Lugares</item>
-        <item>Pagos</item>
-        <item>Cupones</item>
-        <item>Notificaciones</item>
-        <item>Configuraciones</item>
-        <item>Acerca de nosotros</item>
-        <item>Tipo de asistente</item>
-        <item>Tipo de clase</item>
-    </string-array>
 
     <string name="activity_title_about_us">Acerca de nosotros</string>
     <string name="action_clear_all">Clear All</string>
