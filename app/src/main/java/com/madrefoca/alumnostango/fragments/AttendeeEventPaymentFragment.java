@@ -72,7 +72,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
     @BindView(R.id.fabSavePayment)
     FloatingActionButton fabSavePayment;
 
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> attendeesListAdapter;
     private List attendeesArrayList= new ArrayList();
 
     private Dao<Attendee, Integer> attendeesDao;
@@ -84,6 +84,8 @@ public class AttendeeEventPaymentFragment extends Fragment {
 
     private DatabaseHelper databaseHelper = null;
     private Bundle bundle;
+    Event event = null;
+    List<Attendee> attendeeList = null;
 
     public AttendeeEventPaymentFragment() {
         // Required empty public constructor
@@ -94,8 +96,6 @@ public class AttendeeEventPaymentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View thisFragment = inflater.inflate(R.layout.fragment_attendee_event_payment, container, false);
-
-        // TODO: 11/11/17 Hacer que cuando un alumno paga el evento, ya no se liste en la lista de alumnos para que sea mas facil seleccionarlos.
 
         bundle = new Bundle();
         this.bundle = this.getArguments();
@@ -113,6 +113,12 @@ public class AttendeeEventPaymentFragment extends Fragment {
             e.printStackTrace();
         }
 
+        try {
+            event = eventsDao.queryForId(bundle.getInt("eventId"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         this.initViews(thisFragment);
 
         return thisFragment;
@@ -122,25 +128,19 @@ public class AttendeeEventPaymentFragment extends Fragment {
 
         textAttendeeSelected.setText("");
 
-        // Reading all illnesses
         Log.d("AttendeeEventPaymentF: ", "Reading all attendees from database...");
-        List<Attendee> attendeeList = null;
         try {
             attendeeList = databaseHelper.getAttendeeDao().queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        Log.d("AttendeeEventPaymentF: ", "put the attendees in the view...");
-        for (Attendee attendee : attendeeList) {
-            Log.d("attEvPayFragment: ", "Name: " + attendee.getName() + " ,Lastname: " + attendee.getLastName());
-            attendeesArrayList.add(attendee.getAlias());
-        }
+        this.loadAttendees();
 
         // Adding items to listview
-        adapter = new ArrayAdapter<String>(thisFragment.getContext(), R.layout.list_item,
+        attendeesListAdapter = new ArrayAdapter<String>(thisFragment.getContext(), R.layout.list_item,
                 R.id.attendee_name_lastname, attendeesArrayList);
-        attendeeListView.setAdapter(adapter);
+        attendeeListView.setAdapter(attendeesListAdapter);
 
         //set listener to the list for the clicks
         attendeeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -165,7 +165,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                 // When user changed the Text
-                AttendeeEventPaymentFragment.this.adapter.getFilter().filter(cs);
+                AttendeeEventPaymentFragment.this.attendeesListAdapter.getFilter().filter(cs);
             }
 
             @Override
@@ -250,7 +250,6 @@ public class AttendeeEventPaymentFragment extends Fragment {
         } else {
             try {
                 Attendee attendee = attendeesDao.queryForEq("alias", textAttendeeSelected.getText().toString()).get(0);
-                Event event = eventsDao.queryForId(bundle.getInt("eventId"));
                 Payment payment = new Payment();
                 payment.setAmount(150.00);
                 paymentsDao.create(payment);
@@ -264,31 +263,18 @@ public class AttendeeEventPaymentFragment extends Fragment {
                 matchingFields.put("idEvent", event);
                 matchingFields.put("dni", attendee);
 
-                if(attendeeEventPaymentDao.queryForFieldValues(matchingFields).size() == 0) {
+                attendeeEventPaymentDao.create(attendeeEventPayment);
+                Log.d("attEvPayFragment: ", "Se guardo correctamente el pago: " + event.getName() + " - "+ attendee.getAlias());
 
-                    attendeeEventPaymentDao.create(attendeeEventPayment);
-                    Log.d("attEvPayFragment: ", "Se guardo correctamente el pago: " + event.getName() + " - "+ attendee.getAlias());
-                    Snackbar snackbar = Snackbar.make(getView(), "Se guardo correctamente el pago!",
-                            Snackbar.LENGTH_LONG);
-                    View sbView = snackbar.getView();
-                    TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                    textView.setTextColor(Color.GREEN);
-                    snackbar.show();
+                Snackbar snackbar = Snackbar.make(getView(), "Se guardo correctamente el pago!",
+                        Snackbar.LENGTH_SHORT);
+                View sbView = snackbar.getView();
+                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+                textView.setTextColor(Color.GREEN);
+                snackbar.show();
 
-                } else {
-
-                    Log.d("attEvPayFragment: ", "Ya se registró el pago de: " + textAttendeeSelected.getText().toString() + " " +
-                                    event.getName());
-
-                    Snackbar snackbar = Snackbar.make(getView(), "Ya se registró el pago de: " +
-                                    textAttendeeSelected.getText().toString() + ". " +
-                            "Por favor elija otro alumno",
-                            Snackbar.LENGTH_LONG);
-                    View sbView = snackbar.getView();
-                    TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                    textView.setTextColor(Color.YELLOW);
-                    snackbar.show();
-                }
+                this.loadAttendees();
+                attendeesListAdapter.notifyDataSetChanged();
 
             } catch (SQLException e) {
                 Log.d("attEvPayFragment: ", "No se pudo guardar el pago!");
@@ -304,5 +290,27 @@ public class AttendeeEventPaymentFragment extends Fragment {
         }
         textAttendeeSelected.setText("");
         textViewAmount.setText("");
+    }
+
+    private void loadAttendees() {
+
+        Log.d("AttendeeEventPaymentF: ", "put the attendees in the view...");
+        attendeesArrayList.clear();
+        for (Attendee attendee : attendeeList) {
+            Log.d("attEvPayFragment: ", "Name: " + attendee.getName() + " ,Lastname: " + attendee.getLastName());
+
+            Map matchingFields = new HashMap();
+            matchingFields.put("idEvent", event);
+            matchingFields.put("dni", attendee);
+
+            try {
+                //if the attendee already paid the event, is not added to the list
+                if(attendeeEventPaymentDao.queryForFieldValues(matchingFields).size() == 0) {
+                    attendeesArrayList.add(attendee.getAlias());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
