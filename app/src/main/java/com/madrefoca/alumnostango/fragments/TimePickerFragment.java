@@ -67,7 +67,7 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
         bundle = new Bundle();
         this.bundle = this.getArguments();
 
-        databaseHelper = OpenHelperManager.getHelper(this.getContext(),DatabaseHelper.class);
+        databaseHelper = OpenHelperManager.getHelper(view.getContext(),DatabaseHelper.class);
 
         try {
             placesDao = databaseHelper.getPlacesDao();
