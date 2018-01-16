@@ -76,6 +76,10 @@ public class EventsFragment extends Fragment {
     @BindView(R.id.dialog_event_name)
     EditText eventName;
 
+    @Nullable
+    @BindView(R.id.dialog_event_paymentAmount)
+    EditText eventPaymentAmount;
+
 
     //daos
     Dao<EventType, Integer> eventTypeDao;
@@ -236,12 +240,14 @@ public class EventsFragment extends Fragment {
                         //getting data from dialog
                         event = new Event();
                         event.setName(eventName.getText().toString());
+                        event.setPaymentAmount(Double.valueOf(eventPaymentAmount.getText().toString()));
 
                         eventDao.create(event);
                         Log.d("EventFragment: ", "Saved event: " + event.getName());
                     }else{
                         event = eventDao.queryForId(Integer.parseInt(eventId.getText().toString()));
                         event.setName(eventName.getText().toString());
+                        event.setPaymentAmount(Double.valueOf(eventPaymentAmount.getText().toString()));
 
                         eventDao.update(event);
                         Log.d("EventFragment: ", "Updated event: " + event.getName());

@@ -148,7 +148,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String name = attendeeListView.getItemAtPosition(i).toString();
                 textAttendeeSelected.setText(name);
-                textViewAmount.setText("150");
+                textViewAmount.setText(event.getPaymentAmount() != null? event.getPaymentAmount().toString() : "150");
 
                 /*Snackbar snackbar = Snackbar.make(getView(), "Alumno: " + name + " clickeado!",
                         Snackbar.LENGTH_LONG);
@@ -251,7 +251,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
             try {
                 Attendee attendee = attendeesDao.queryForEq("alias", textAttendeeSelected.getText().toString()).get(0);
                 Payment payment = new Payment();
-                payment.setAmount(150.00);
+                payment.setAmount(Double.valueOf(textViewAmount.getText().toString()));
                 paymentsDao.create(payment);
 
                 AttendeeEventPayment attendeeEventPayment = new AttendeeEventPayment();

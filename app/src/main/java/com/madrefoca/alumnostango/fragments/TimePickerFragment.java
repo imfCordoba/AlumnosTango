@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -38,7 +39,7 @@ import butterknife.ButterKnife;
  */
 public class TimePickerFragment extends Fragment implements TimePickerDialog.OnTimeSetListener {
 
-    private AlertDialog.Builder addPlaceDialog;
+    private AlertDialog.Builder addPlaceAndAmountDialog;
     private View view;
     private ArrayAdapter<String> dataAdapter;
     private DatabaseHelper databaseHelper = null;
@@ -48,6 +49,10 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
     @Nullable
     @BindView(R.id.place_spinner)
     Spinner placeSpinner;
+
+    @Nullable
+    @BindView(R.id.paymentAmount)
+    EditText eventPaymentAmount;
 
     //daos
     Dao<Place, Integer> placesDao;
@@ -117,25 +122,27 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
         bundle.putInt("hour", hourOfDay);
         bundle.putInt("minutes", minute);
 
-        addPlaceDialog.setTitle("Lugar");
+        addPlaceAndAmountDialog.setTitle("Lugar y monto");
         placeSpinner.setSelection(1);
-        addPlaceDialog.show();
+        eventPaymentAmount.setText("150");
+        addPlaceAndAmountDialog.show();
     }
 
     private void initDialog(View thisFragment, LayoutInflater inflater) {
-        addPlaceDialog = new AlertDialog.Builder(thisFragment.getContext());
+        addPlaceAndAmountDialog = new AlertDialog.Builder(thisFragment.getContext());
         view = inflater.inflate(R.layout.dialog_place_selector,null);
 
         ButterKnife.bind(this, view);
 
-        addPlaceDialog.setView(view);
+        addPlaceAndAmountDialog.setView(view);
 
         this.populatePlaceSpinner(view);
 
-        addPlaceDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+        addPlaceAndAmountDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String placeSelected = placeSpinner.getSelectedItem().toString();
+                Double amountToPay = Double.valueOf(eventPaymentAmount.getText().toString());
                 Place place = null;
                 try {
                     place = placesDao.queryForEq("name", placeSelected).get(0);
@@ -153,7 +160,8 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
                         bundle.getInt("year") + " - " +
                         bundle.getInt("hour") + ":" +
                         minuteString + " hs. - " +
-                        placeSelected;
+                        placeSelected + " - " +
+                        "($" + amountToPay + ")";
 
                 newEvent.setName(eventName);
                 newEvent.setYear(bundle.getInt("year"));
@@ -162,6 +170,7 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
                 newEvent.setHour(bundle.getInt("hour"));
                 newEvent.setMinutes(bundle.getInt("minutes"));
                 newEvent.setPlace(place);
+                newEvent.setPaymentAmount(amountToPay);
 
                 Snackbar snackbar;
                 try {

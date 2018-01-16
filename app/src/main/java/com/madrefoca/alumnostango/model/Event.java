@@ -37,6 +37,9 @@ public class Event {
     @DatabaseField
     private Integer minutes;
 
+    @DatabaseField
+    private Double paymentAmount;
+
     public Event() {
     }
 
@@ -112,5 +115,13 @@ public class Event {
 
     public void setMinutes(Integer minutes) {
         this.minutes = minutes;
+    }
+
+    public Double getPaymentAmount() {
+        return paymentAmount;
+    }
+
+    public void setPaymentAmount(Double paymentAmount) {
+        this.paymentAmount = paymentAmount;
     }
 }
