@@ -29,7 +29,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "AlumnosTango.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 9;
 
     private Dao<Attendee, Integer> attendeeDao;
     private Dao<AttendeeEventPayment, Integer> attendeeEventPaymentDao;
@@ -127,6 +127,24 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Unable to clear tables", e);
         }
+    }
+
+    public void clearTable(String tableName) {
+
+        try {
+            switch (tableName) {
+                case "attendees":
+                    TableUtils.clearTable(connectionSource, Attendee.class);
+                    Log.d("DatabaseHelper: ", "Databse table : " + tableName + " cleared!");
+                    break;
+                default:
+                    break;
+            }
+        } catch (SQLException e) {
+            Log.e("DatabaseHelper: ", "Cannot clear table: " + tableName + " in database");
+            e.printStackTrace();
+        }
+
     }
 
     public Dao<Attendee, Integer> getAttendeeDao() throws SQLException {

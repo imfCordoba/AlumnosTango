@@ -35,7 +35,7 @@ public class AttendeesDataAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder)holder;
-        viewHolder.attendeeName.setText(attendeesList.get(position).getName() +" "+ attendeesList.get(position).getLastName());
+        viewHolder.attendeeName.setText(attendeesList.get(position).getAlias());
     }
 
     @Override

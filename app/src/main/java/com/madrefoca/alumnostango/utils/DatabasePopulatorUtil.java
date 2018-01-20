@@ -42,7 +42,7 @@ public class DatabasePopulatorUtil {
             attendeeTypeDao.create(attendeeType);
 
             ArrayList<Attendee> attendeeArrayList = new ArrayList<Attendee>();
-            attendeeArrayList.add(new Attendee("Fernando", "Gomez de Paz", attendeeType, 153251291));
+            /*attendeeArrayList.add(new Attendee("Fernando", "Gomez de Paz", attendeeType, 153251291));
             attendeeArrayList.add(new Attendee("Daniel", "gdp", attendeeType, 153251291));
             attendeeArrayList.add(new Attendee("Pepe", "gomez", attendeeType, 153251291));
             attendeeArrayList.add(new Attendee("Eduardo", "Charrett", attendeeType, 153251291));
@@ -65,7 +65,7 @@ public class DatabasePopulatorUtil {
             attendeeArrayList.add(new Attendee("Santy", "asdffa", attendeeType, 423444));
             attendeeArrayList.add(new Attendee("Lau","ffff", attendeeType, 153251291));
             attendeeArrayList.add(new Attendee("Mauro","asdffee", attendeeType, 153251291));
-            attendeeArrayList.add(new Attendee("Ale","asdfefefafvasad", attendeeType, 153251291));
+            attendeeArrayList.add(new Attendee("Ale","asdfefefafvasad", attendeeType, 153251291));*/
 
 
             for(Attendee attendee: attendeeArrayList){

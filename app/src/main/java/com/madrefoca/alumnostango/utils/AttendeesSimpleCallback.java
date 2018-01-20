@@ -216,7 +216,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
         if(attendeesList.get(position).getAge() != null)
             attendeeAge.setText(attendeesList.get(position).getAge().toString());
         if(attendeesList.get(position).getCellphoneNumber() != null)
-            attendeePhone.setText(attendeesList.get(position).getCellphoneNumber().toString());
+            attendeePhone.setText(attendeesList.get(position).getCellphoneNumber());
         attendeeFacebook.setText(attendeesList.get(position).getFacebookProfile());
         attendeeEmail.setText(attendeesList.get(position).getEmail());
         attendeeTypesSpinner.setSelection(dataAdapter.getPosition(attendeesList.get(position).getAttendeeType().getName()));
@@ -264,7 +264,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                         attendee.setLastName(attendeeLastName.getText().toString());
                         attendee.setAlias();
                         attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
-                        attendee.setCellphoneNumber(Integer.parseInt(attendeePhone.getText().toString()));
+                        attendee.setCellphoneNumber(attendeePhone.getText().toString());
                         attendee.setFacebookProfile(attendeeFacebook.getText().toString());
                         attendee.setEmail(attendeeEmail.getText().toString());
                         attendee.setAttendeeType(attendeeType);
@@ -278,7 +278,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                         attendee.setLastName(attendeeLastName.getText().toString());
                         attendee.setAlias();
                         attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
-                        attendee.setCellphoneNumber(Integer.parseInt(attendeePhone.getText().toString()));
+                        attendee.setCellphoneNumber(attendeePhone.getText().toString());
                         attendee.setFacebookProfile(attendeeFacebook.getText().toString());
                         attendee.setEmail(attendeeEmail.getText().toString());
                         attendee.setAttendeeType(attendeeType);

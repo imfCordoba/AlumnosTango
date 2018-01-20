@@ -18,14 +18,14 @@ public class Attendee {
     @DatabaseField(canBeNull = false)
     private String name;
 
-    @DatabaseField(canBeNull = false)
+    @DatabaseField
     private String lastName;
 
     @DatabaseField
     private Integer age;
 
     @DatabaseField
-    private Integer cellphoneNumber;
+    private String cellphoneNumber;
 
     @DatabaseField
     private String facebookProfile;
@@ -43,7 +43,7 @@ public class Attendee {
 
     }
 
-    public Attendee(String name, String lastName, Integer age, Integer cellphoneNumber,
+    public Attendee(String name, String lastName, Integer age, String cellphoneNumber,
                     String facebookProfile, String email) {
         this.name = name;
         this.lastName = lastName;
@@ -53,14 +53,14 @@ public class Attendee {
         this.email = email;
     }
 
-    public Attendee(String name, String lastName, AttendeeType attendeeType, Integer cellphoneNumber) {
+    public Attendee(String name, String lastName, AttendeeType attendeeType, String cellphoneNumber) {
         this.name = name;
         this.lastName = lastName;
         this.attendeeType = attendeeType;
         this.cellphoneNumber = cellphoneNumber;
     }
 
-    public Attendee(String name, Integer cellphoneNumber) {
+    public Attendee(String name, String cellphoneNumber) {
         this.name = name;
         this.cellphoneNumber = cellphoneNumber;
     }
@@ -105,11 +105,11 @@ public class Attendee {
         this.age = age;
     }
 
-    public Integer getCellphoneNumber() {
+    public String getCellphoneNumber() {
         return cellphoneNumber;
     }
 
-    public void setCellphoneNumber(Integer cellphoneNumber) {
+    public void setCellphoneNumber(String cellphoneNumber) {
         this.cellphoneNumber = cellphoneNumber;
     }
 
@@ -134,7 +134,11 @@ public class Attendee {
     }
 
     public void setAlias() {
-        this.alias = this.getName() + " " + this.getLastName();
+        if(this.getLastName() != null) {
+            this.alias = this.getName() + " " + this.getLastName();
+        } else {
+            this.alias = this.getName();
+        }
     }
 
     public String getState() {
