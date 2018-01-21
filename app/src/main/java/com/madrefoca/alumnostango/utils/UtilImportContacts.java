@@ -5,8 +5,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -23,7 +25,7 @@ import java.util.Map;
  * Created by fernando on 20/01/18.
  */
 
-public class UtilImportContacts extends AsyncTask<String, String, String> {
+public class UtilImportContacts extends AsyncTask<Integer, Integer, String> {
     // TODO: 20/01/18  The application may be doing too much work on its main thread. investigate this message.
 
     private ContentResolver contentResolver;
@@ -37,12 +39,12 @@ public class UtilImportContacts extends AsyncTask<String, String, String> {
 
     private int countOfContactsSaved = 0;
 
-    private String resp;
     ProgressBar progressBar;
     private Context context;
 
-    public UtilImportContacts(Context context) {
+    public UtilImportContacts(Context context, ProgressBar progressBar) {
         this.context = context;
+        this.progressBar = progressBar;
     }
 
     private void importAllContactsFromPhone() {
@@ -78,14 +80,16 @@ public class UtilImportContacts extends AsyncTask<String, String, String> {
                 null, null, null, null);
 
         if (cur.getCount() > 0) {
-
             while (cur.moveToNext()) {
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
 
                     String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
 
                     Map<String, String> contact = new HashMap<String, String>();
-                    contact.put("nameContact", cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+                    contact.put("nameContact", cur.getString(cur.getColumnIndex(Build.VERSION.SDK_INT
+                            >= Build.VERSION_CODES.HONEYCOMB ?
+                            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
+                            ContactsContract.Contacts.DISPLAY_NAME)));
                     contact.put("phoneContact", retrieveContactNumber(id));
                     contact.put("emailContact", retrieveContactEmail(id));
 
@@ -93,9 +97,27 @@ public class UtilImportContacts extends AsyncTask<String, String, String> {
 
                 }
             }
+            Log.i("UtilImportContacts: ", "Count of total contacts with number: " + this.countContacts());
             Log.i("UtilImportContacts: ", "Count of total contacts: " + cur.getCount());
             Log.i("UtilImportContacts: ", "Count of contacts saved: " + this.countOfContactsSaved);
         }
+    }
+
+    private int countContacts() {
+        int numberOfContacts = 0;
+        contentResolver = context.getContentResolver();
+
+        Cursor cur = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                    numberOfContacts++;
+                }
+            }
+        }
+        return numberOfContacts;
     }
 
     private String retrieveContactNumber(String idContact) {
@@ -160,32 +182,32 @@ public class UtilImportContacts extends AsyncTask<String, String, String> {
             Log.e("UtilImportContacts: ", "Cannot save imported contact: " + contact.get("nameContact") + " in database");
             e.printStackTrace();
         }
-        this.countOfContactsSaved++;
+
+        publishProgress(this.countOfContactsSaved++);
         Log.d("UtilImportContacts: ", "Saved imported contact: " + contact.get("nameContact"));
 
     }
 
     @Override
-    protected String doInBackground(String... params) {
-        publishProgress("Working..."); // Calls onProgressUpdate()
-        resp = "Working";
+    protected String doInBackground(Integer... integers) {
         this.importAllContactsFromPhone();
 
-        return resp;
+        return "Task Completed.";
     }
 
     @Override
     protected void onPostExecute(String result) {
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     protected void onPreExecute() {
+        progressBar.setMax(this.countContacts());
     }
 
     @Override
-    protected void onProgressUpdate(String... text) {
-        //finalResult.setText(text[0]);
-
+    protected void onProgressUpdate(Integer... values) {
+        progressBar.setProgress(values[0]);
     }
 }
 

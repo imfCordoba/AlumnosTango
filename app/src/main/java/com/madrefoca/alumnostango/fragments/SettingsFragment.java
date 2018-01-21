@@ -12,8 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
-import com.github.clans.fab.FloatingActionButton;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
@@ -39,10 +39,15 @@ public class SettingsFragment extends Fragment {
     @BindView(R.id.importContactsButton)
     Button importContactsButton;
 
+    @Nullable
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
+    private Integer count =1;
+
     private DatabaseHelper databaseHelper = null;
 
     View thisFragment = null;
-
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -63,6 +68,8 @@ public class SettingsFragment extends Fragment {
 
         ButterKnife.bind(this, thisFragment);
 
+        progressBar.setMax(10);
+
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 
         return thisFragment;
@@ -80,10 +87,12 @@ public class SettingsFragment extends Fragment {
     @Optional
     @OnClick(R.id.importContactsButton)
     public void onClickImportContactsButton() {
-        UtilImportContacts utilImportContacts = new UtilImportContacts(thisFragment.getContext());
-        String sleepTime = "0";
-        utilImportContacts.execute(sleepTime);
-        //utilImportContacts.importAllContactsFromPhone(thisFragment.getContext());
+        count =1;
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+
+        UtilImportContacts utilImportContacts = new UtilImportContacts(thisFragment.getContext(), progressBar);
+        utilImportContacts.execute(481);
 
     }
 
