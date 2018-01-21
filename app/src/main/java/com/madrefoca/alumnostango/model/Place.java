@@ -23,7 +23,7 @@ public class Place {
     private String gpsLocation;
 
     @DatabaseField
-    private Integer phone;
+    private String phone;
 
     @DatabaseField
     private String email;
@@ -34,7 +34,7 @@ public class Place {
     public Place() {
     }
 
-    public Place(String name, String address, String gpsLocation, Integer phone, String email,
+    public Place(String name, String address, String gpsLocation, String phone, String email,
                  String facebookLink) {
         this.name = name;
         this.address = address;
@@ -76,11 +76,11 @@ public class Place {
         this.gpsLocation = gpsLocation;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

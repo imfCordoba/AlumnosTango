@@ -238,7 +238,7 @@ public class PlacesFragment extends Fragment {
                         place = new Place();
                         place.setName(placeName.getText().toString());
                         place.setAddress(placeAddress.getText().toString());
-                        place.setPhone(Integer.parseInt(placePhone.getText().toString()));
+                        place.setPhone(placePhone.getText().toString());
                         place.setFacebookLink(placeFacebook.getText().toString());
                         place.setEmail(placeEmail.getText().toString());
 
@@ -248,7 +248,7 @@ public class PlacesFragment extends Fragment {
                         place = placeDao.queryForId(Integer.parseInt(placeId.getText().toString()));
                         place.setName(placeName.getText().toString());
                         place.setAddress(placeAddress.getText().toString());
-                        place.setPhone(Integer.parseInt(placePhone.getText().toString()));
+                        place.setPhone(placePhone.getText().toString());
                         place.setFacebookLink(placeFacebook.getText().toString());
                         place.setEmail(placeEmail.getText().toString());
 

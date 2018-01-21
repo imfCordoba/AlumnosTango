@@ -1,10 +1,13 @@
 package com.madrefoca.alumnostango.utils;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -20,7 +23,7 @@ import java.util.Map;
  * Created by fernando on 20/01/18.
  */
 
-public class UtilImportContacts {
+public class UtilImportContacts extends AsyncTask<String, String, String> {
     // TODO: 20/01/18  The application may be doing too much work on its main thread. investigate this message.
 
     private ContentResolver contentResolver;
@@ -34,7 +37,16 @@ public class UtilImportContacts {
 
     private int countOfContactsSaved = 0;
 
-    public void importAllContactsFromPhone(Context context) {
+    private String resp;
+    ProgressBar progressBar;
+    private Context context;
+
+    public UtilImportContacts(Context context) {
+        this.context = context;
+    }
+
+    private void importAllContactsFromPhone() {
+
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
         try {
             attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
@@ -93,10 +105,12 @@ public class UtilImportContacts {
         Cursor pCur = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
                 new String[]{idContact}, null);
-        while (pCur.moveToNext()) {
+        if(!pCur.isAfterLast()) {
+            pCur.moveToNext();
             phoneNumber = pCur.getString(
-                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).trim();
         }
+
         pCur.close();
 
         return phoneNumber;
@@ -109,12 +123,13 @@ public class UtilImportContacts {
                 null,
                 ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
                 new String[]{idContact}, null);
-        while (emailCur.moveToNext()) {
-            // This would allow you get several email addresses
-            // if the email addresses were stored in an array
+
+        if(!emailCur.isAfterLast()) {
+            emailCur.moveToNext();
             email = emailCur.getString(
-                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA)).trim();
         }
+
         emailCur.close();
 
         return email;
@@ -129,7 +144,6 @@ public class UtilImportContacts {
             Log.d("UtilImportContacts: ", "Cannot find attendee type: " + attendeTypeSelected + "in database");
             e.printStackTrace();
         }
-
 
         Attendee attendee = new Attendee();
         attendee.setName(contact.get("nameContact"));
@@ -148,6 +162,29 @@ public class UtilImportContacts {
         }
         this.countOfContactsSaved++;
         Log.d("UtilImportContacts: ", "Saved imported contact: " + contact.get("nameContact"));
+
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
+        publishProgress("Working..."); // Calls onProgressUpdate()
+        resp = "Working";
+        this.importAllContactsFromPhone();
+
+        return resp;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+    }
+
+    @Override
+    protected void onPreExecute() {
+    }
+
+    @Override
+    protected void onProgressUpdate(String... text) {
+        //finalResult.setText(text[0]);
 
     }
 }

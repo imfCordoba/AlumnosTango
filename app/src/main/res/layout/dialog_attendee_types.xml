@@ -15,7 +15,9 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:hint="nombre" />
+            android:hint="nombre"
+            android:inputType="textAutoComplete"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/dialog_attendee_type_id"

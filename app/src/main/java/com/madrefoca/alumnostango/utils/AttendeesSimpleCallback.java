@@ -263,7 +263,9 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                         attendee.setName(attendeeName.getText().toString());
                         attendee.setLastName(attendeeLastName.getText().toString());
                         attendee.setAlias();
-                        attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
+                        if(!attendeeAge.getText().toString().trim().isEmpty()) {
+                            attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
+                        }
                         attendee.setCellphoneNumber(attendeePhone.getText().toString());
                         attendee.setFacebookProfile(attendeeFacebook.getText().toString());
                         attendee.setEmail(attendeeEmail.getText().toString());
@@ -277,7 +279,9 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                         attendee.setName(attendeeName.getText().toString());
                         attendee.setLastName(attendeeLastName.getText().toString());
                         attendee.setAlias();
-                        attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
+                        if(!attendeeAge.getText().toString().trim().isEmpty()) {
+                            attendee.setAge(Integer.parseInt(attendeeAge.getText().toString()));
+                        }
                         attendee.setCellphoneNumber(attendeePhone.getText().toString());
                         attendee.setFacebookProfile(attendeeFacebook.getText().toString());
                         attendee.setEmail(attendeeEmail.getText().toString());
@@ -358,5 +362,9 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
         attendeeEmail.setText("");
         attendeeTypesSpinner.setSelection(0);
         addEditAttendeeDialog.show();
+    }
+
+    public void updateAttendeesLIst(ArrayList<Attendee> filterdAttendeesList) {
+        this.attendeesList = filterdAttendeesList;
     }
 }

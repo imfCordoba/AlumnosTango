@@ -1,4 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,7 +17,9 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:hint="nombre" />
+            android:hint="nombre"
+            android:inputType="textPersonName"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/dialog_attendee_lastname"
@@ -28,7 +31,8 @@
             android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="apellido"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/dialog_attendee_age"
@@ -38,9 +42,12 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
+            android:digits="2"
             android:ems="10"
             android:hint="edad (opcional)"
-            android:inputType="number" />
+            android:inputType="number"
+            android:numeric="integer"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/dialog_attendee_phone"
@@ -64,7 +71,8 @@
             android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="facebook (opcinal)"
-            android:inputType="none" />
+            android:inputType="textUri"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/dialog_attendee_email"
@@ -76,7 +84,8 @@
             android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="email (opcional)"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:singleLine="true" />
 
         <Spinner
             android:id="@+id/dialog_attendee_type_spinner"

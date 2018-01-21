@@ -26,7 +26,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:hint="dirección"
+            android:hint="dirección (opcional)"
             android:inputType="text" />
 
         <EditText

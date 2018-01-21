@@ -80,9 +80,10 @@ public class SettingsFragment extends Fragment {
     @Optional
     @OnClick(R.id.importContactsButton)
     public void onClickImportContactsButton() {
-        UtilImportContacts utilImportContacts = new UtilImportContacts();
-
-        utilImportContacts.importAllContactsFromPhone(thisFragment.getContext());
+        UtilImportContacts utilImportContacts = new UtilImportContacts(thisFragment.getContext());
+        String sleepTime = "0";
+        utilImportContacts.execute(sleepTime);
+        //utilImportContacts.importAllContactsFromPhone(thisFragment.getContext());
 
     }
 

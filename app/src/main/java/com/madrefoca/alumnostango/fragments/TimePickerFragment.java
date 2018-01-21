@@ -123,7 +123,7 @@ public class TimePickerFragment extends Fragment implements TimePickerDialog.OnT
         bundle.putInt("minutes", minute);
 
         addPlaceAndAmountDialog.setTitle("Lugar y monto");
-        placeSpinner.setSelection(1);
+        placeSpinner.setSelection(0);
         eventPaymentAmount.setText("150");
         addPlaceAndAmountDialog.show();
     }

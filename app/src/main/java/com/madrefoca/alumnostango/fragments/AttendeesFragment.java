@@ -61,6 +61,9 @@ public class AttendeesFragment extends Fragment {
     Dao<AttendeeType, Integer> attendeeTypeDao;
     Dao<Attendee, Integer> attendeeDao;
 
+    private ItemTouchHelper.SimpleCallback simpleItemTouchCallback;
+    private ItemTouchHelper itemTouchHelper;
+
     public AttendeesFragment() {
         // Required empty public constructor
     }
@@ -109,12 +112,16 @@ public class AttendeesFragment extends Fragment {
     }
 
     private void initSwipe(View thisFragment) {
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new AttendeesSimpleCallback(0,
+        this.simpleItemTouchCallback = new AttendeesSimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, thisFragment.getContext(), attendeesList,
                 attendeesListAdapter, thisFragment);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(attendeesRecyclerView);
+    }
+
+    private void updateSwipe(ArrayList<Attendee> filterdAttendeesList) {
+        ((AttendeesSimpleCallback) simpleItemTouchCallback).updateAttendeesLIst(filterdAttendeesList);
     }
 
     private List<Attendee> getAllAttendeeFromDatabase() {
@@ -168,5 +175,6 @@ public class AttendeesFragment extends Fragment {
 
         //calling a method of the adapter class and passing the filtered list
         attendeesListAdapter.filterList(filterdAttendeesList);
+        this.updateSwipe(filterdAttendeesList);
     }
 }
