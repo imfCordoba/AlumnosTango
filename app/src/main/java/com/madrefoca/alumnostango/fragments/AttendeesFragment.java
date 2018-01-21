@@ -166,7 +166,7 @@ public class AttendeesFragment extends Fragment {
             //looping through existing elements
             for (Attendee attendee : attendeesList) {
                 //if the existing elements contains the search input
-                if (attendee.getAlias().contains(text)) {
+                if (attendee.getAlias().toLowerCase().contains(text.toLowerCase())) {
                     //adding the element to filtered list
                     filterdAttendeesList.add(attendee);
                 }
