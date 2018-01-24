@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
@@ -18,6 +19,16 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,6 +77,13 @@ public class SettingsFragment extends Fragment {
                     REQUEST_CODE_ASK_PERMISSIONS);
         }
 
+        int hasWritePermission = ActivityCompat.checkSelfPermission(thisFragment.getContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (hasWritePermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE_ASK_PERMISSIONS);
+        }
+
         ButterKnife.bind(this, thisFragment);
 
         progressBar.setMax(10);
@@ -81,7 +99,49 @@ public class SettingsFragment extends Fragment {
         //save database
         //path: /data/data/com.madrefoca.alumnostango/databases/AlumnosTango.db
 
+        //create folder in internal storage if does not exist.
+        createJsonFolder();
+
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
+    }
+
+    private void createJsonFolder() {
+        String path = Environment.getDataDirectory().getAbsolutePath().toString() +
+                "/com.madrefoca.alumnostango/jsonFolder";
+        File file = new File(thisFragment.getContext().getFilesDir(), "example.json");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        FileOutputStream fos;
+        DataOutputStream dos;
+        String s = "";
+        try {
+            File f = thisFragment.getContext().getFilesDir();
+            s = f.getCanonicalPath();
+            File file2= new File(s + "/archivo3.txt");
+
+            if(file.exists()){
+                file.delete();
+            }
+
+            if(file2.exists()){
+                file2.delete();
+            }
+            file2.createNewFile();
+            fos = new FileOutputStream(file2);
+            dos = new DataOutputStream(fos);
+            dos.write("asdfadf".getBytes());
+            dos.writeChars("\n");
+            dos.write("ddddddddddddddd".getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("app path: ",s);
+
     }
 
     @Optional
