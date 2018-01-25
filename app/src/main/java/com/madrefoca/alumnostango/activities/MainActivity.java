@@ -135,8 +135,9 @@ public class MainActivity extends AppCompatActivity{
                         ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_NOTIFICATIONS);
                         break;
                     case R.id.nav_settings:
-                        ManageFragmentsNavigation.setCurrentTag(ManageFragmentsNavigation.TAG_SETTINGS);
-                        break;
+                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        drawer.closeDrawers();
+                        return true;
                     case R.id.nav_aboutUs:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(MainActivity.this, AboutUsActivity.class));

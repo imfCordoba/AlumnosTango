@@ -213,7 +213,7 @@ public class SettingsFragment extends Fragment {
                         new Continuation<IntentSender, Void>() {
                             @Override
                             public Void then(@NonNull Task<IntentSender> task) throws Exception {
-                                startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                                //startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
                                 return null;
                             }
                         });

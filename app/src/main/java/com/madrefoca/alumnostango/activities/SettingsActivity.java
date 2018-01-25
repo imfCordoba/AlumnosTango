@@ -28,8 +28,12 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
+import com.madrefoca.alumnostango.model.Attendee;
+import com.madrefoca.alumnostango.model.Payment;
+import com.madrefoca.alumnostango.utils.JsonUtil;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
 
 import java.io.DataOutputStream;
@@ -37,6 +41,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,6 +77,9 @@ public class SettingsActivity extends AppCompatActivity {
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
 
+    private Dao<Attendee, Integer> attendeeDao;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,17 +101,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         ButterKnife.bind(this, this);
 
-        progressBar.setMax(10);
-
         databaseHelper = OpenHelperManager.getHelper(this.getApplicationContext(),DatabaseHelper.class);
 
-        this.signIn();
+        try {
+            attendeeDao = databaseHelper.getAttendeeDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        // Use the last signed in account here since it already have a Drive scope.
-        mDriveClient = Drive.getDriveClient(this.getApplicationContext(), GoogleSignIn.getLastSignedInAccount(this.getApplicationContext()));
-        // Build a drive resource client.
-        mDriveResourceClient =
-                Drive.getDriveResourceClient(this.getApplicationContext(), GoogleSignIn.getLastSignedInAccount(this.getApplicationContext()));
+        this.signIn();
     }
 
     /** Start sign in activity. */
@@ -125,7 +132,6 @@ public class SettingsActivity extends AppCompatActivity {
     private void saveFileToDrive() {
         // Start by creating a new contents, and setting a callback.
         Log.i(TAG, "Creating new contents.");
-        final Bitmap image = mBitmapToSave;
 
         mDriveResourceClient
                 .createContents()
@@ -133,7 +139,7 @@ public class SettingsActivity extends AppCompatActivity {
                         new Continuation<DriveContents, Task<Void>>() {
                             @Override
                             public Task<Void> then(@NonNull Task<DriveContents> task) throws Exception {
-                                return createFileIntentSender(task.getResult(), image);
+                                return createFileIntentSender(task.getResult());
                             }
                         })
                 .addOnFailureListener(
@@ -149,13 +155,20 @@ public class SettingsActivity extends AppCompatActivity {
      * Creates an {@link IntentSender} to start a dialog activity with configured {@link
      * CreateFileActivityOptions} for user to create a new photo in Drive.
      */
-    private Task<Void> createFileIntentSender(DriveContents driveContents, Bitmap image) {
+    private Task<Void> createFileIntentSender(DriveContents driveContents) {
         Log.i(TAG, "New contents created.");
         // Get an output stream for the contents.
         OutputStream outputStream = driveContents.getOutputStream();
-
+        List<Attendee> attendees = null;
         try {
-            outputStream.write("asdf".getBytes());
+            attendees = attendeeDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String attendeesJson = JsonUtil.toJSon(attendees);
+        Log.i("test", attendeesJson);
+        try {
+            outputStream.write(attendeesJson.getBytes());
         } catch (IOException e) {
             Log.w(TAG, "Unable to write file contents.", e);
         }
@@ -165,7 +178,7 @@ public class SettingsActivity extends AppCompatActivity {
         MetadataChangeSet metadataChangeSet =
                 new MetadataChangeSet.Builder()
                         .setMimeType("application/json")
-                        .setTitle("examplefile.json")
+                        .setTitle("attendees.json")
                         .build();
         // Set up options to configure and display the create file activity.
         CreateFileActivityOptions createFileActivityOptions =
@@ -189,7 +202,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void createJsonFolder() {
         String path = Environment.getDataDirectory().getAbsolutePath().toString() +
                 "/com.madrefoca.alumnostango/jsonFolder";
-        File file = new File(thisFragment.getContext().getFilesDir(), "example.json");
+        File file = new File(getApplicationContext().getFilesDir(), "example.json");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -200,7 +213,7 @@ public class SettingsActivity extends AppCompatActivity {
         DataOutputStream dos;
         String s = "";
         try {
-            File f = thisFragment.getContext().getFilesDir();
+            File f = getApplicationContext().getFilesDir();
             s = f.getCanonicalPath();
             File file2= new File(s + "/archivo3.txt");
 
@@ -231,8 +244,15 @@ public class SettingsActivity extends AppCompatActivity {
         //save database
         //path: /data/data/com.madrefoca.alumnostango/databases/AlumnosTango.db
 
+        // Use the last signed in account here since it already have a Drive scope.
+        mDriveClient = Drive.getDriveClient(this.getApplicationContext(), GoogleSignIn.getLastSignedInAccount(this.getApplicationContext()));
+        // Build a drive resource client.
+        mDriveResourceClient =
+                Drive.getDriveResourceClient(this.getApplicationContext(), GoogleSignIn.getLastSignedInAccount(this.getApplicationContext()));
+
         //create folder in internal storage if does not exist.
-        createJsonFolder();
+        //createJsonFolder();
+        saveFileToDrive();
 
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
     }
@@ -244,7 +264,7 @@ public class SettingsActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
 
-        UtilImportContacts utilImportContacts = new UtilImportContacts(thisFragment.getContext(), progressBar);
+        UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar);
         utilImportContacts.execute(481);
 
     }
