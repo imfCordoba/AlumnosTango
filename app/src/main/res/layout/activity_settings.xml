@@ -24,7 +24,14 @@
             android:id="@+id/exportDbButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Exportar base de datos"
+            android:text="Exportar datos a google drive"
+            android:theme="@style/PrimaryButton" />
+
+        <Button
+            android:id="@+id/importDbButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Importar datos de google drive"
             android:theme="@style/PrimaryButton" />
 
         <Button
