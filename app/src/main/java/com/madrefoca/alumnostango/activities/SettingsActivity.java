@@ -170,6 +170,7 @@ public class SettingsActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DriveId driveId) {
                                 retrieveContents(driveId.asDriveFile());
+                                Log.i("exitouuu", "----------------------++++++++++++++++++++++++---------------------");
                             }
                         })
                 .addOnFailureListener(this, new OnFailureListener() {
@@ -351,12 +352,8 @@ public class SettingsActivity extends AppCompatActivity {
     public void onClickExportDatabase() {
         //save database
         //path: /data/data/com.madrefoca.alumnostango/databases/AlumnosTango.db
-
-        // Use the last signed in account here since it already have a Drive scope.
-        mDriveClient = Drive.getDriveClient(this.getApplicationContext(), GoogleSignIn.getLastSignedInAccount(this.getApplicationContext()));
-        // Build a drive resource client.
-        mDriveResourceClient =
-                Drive.getDriveResourceClient(this.getApplicationContext(), GoogleSignIn.getLastSignedInAccount(this.getApplicationContext()));
+        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
+        this.initializeDriveClient(signInAccount);
 
         //create folder in internal storage if does not exist.
         //createJsonFolder();
