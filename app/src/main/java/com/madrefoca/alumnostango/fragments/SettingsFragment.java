@@ -266,7 +266,6 @@ public class SettingsFragment extends Fragment {
         progressBar.setProgress(0);
 
         UtilImportContacts utilImportContacts = new UtilImportContacts(thisFragment.getContext(), progressBar);
-        utilImportContacts.execute(481);
 
     }
 

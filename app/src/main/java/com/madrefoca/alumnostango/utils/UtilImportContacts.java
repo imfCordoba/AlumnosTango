@@ -18,6 +18,7 @@ import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeType;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import java.util.Map;
  * Created by fernando on 20/01/18.
  */
 
-public class UtilImportContacts extends AsyncTask<Integer, Integer, String> {
+public class UtilImportContacts extends AsyncTask<String, Integer, String> {
     // TODO: 20/01/18  The application may be doing too much work on its main thread. investigate this message.
 
     private ContentResolver contentResolver;
@@ -42,12 +43,23 @@ public class UtilImportContacts extends AsyncTask<Integer, Integer, String> {
     ProgressBar progressBar;
     private Context context;
 
+    private static final String FROM_PHONE = "phone";
+    private static final String FROM_GOOGLE_DRIVE = "drive";
+
+    private String jsonContacts;
+
     public UtilImportContacts(Context context, ProgressBar progressBar) {
         this.context = context;
         this.progressBar = progressBar;
     }
 
-    private void importAllContactsFromPhone() {
+    public UtilImportContacts(Context context, ProgressBar progressBar, String jsonContacts) {
+        this.context = context;
+        this.progressBar = progressBar;
+        this.jsonContacts = jsonContacts;
+    }
+
+    private void importAllContacts(String origin) {
 
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
         try {
@@ -74,33 +86,51 @@ public class UtilImportContacts extends AsyncTask<Integer, Integer, String> {
             e.printStackTrace();
         }
 
-        contentResolver = context.getContentResolver();
+        switch (origin) {
+            case FROM_PHONE:
+                contentResolver = context.getContentResolver();
 
-        Cursor cur = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
+                Cursor cur = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                        null, null, null, null);
 
-        if (cur.getCount() > 0) {
-            while (cur.moveToNext()) {
-                if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                if (cur.getCount() > 0) {
+                    while (cur.moveToNext()) {
+                        if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
 
-                    String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                            String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
 
-                    Map<String, String> contact = new HashMap<String, String>();
-                    contact.put("nameContact", cur.getString(cur.getColumnIndex(Build.VERSION.SDK_INT
-                            >= Build.VERSION_CODES.HONEYCOMB ?
-                            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
-                            ContactsContract.Contacts.DISPLAY_NAME)));
-                    contact.put("phoneContact", retrieveContactNumber(id));
-                    contact.put("emailContact", retrieveContactEmail(id));
+                            Attendee attendeeContact = new Attendee();
+                            attendeeContact.setName(cur.getString(cur.getColumnIndex(Build.VERSION.SDK_INT
+                                    >= Build.VERSION_CODES.HONEYCOMB ?
+                                    ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
+                                    ContactsContract.Contacts.DISPLAY_NAME)));
+                            attendeeContact.setCellphoneNumber(retrieveContactNumber(id));
+                            attendeeContact.setEmail(retrieveContactEmail(id));
 
-                    this.saveImportedContact(contact);
-
+                            this.saveImportedContact(attendeeContact);
+                            Log.d("UtilImportContacts: ", "Saved imported contact from phone: " + attendeeContact.getAlias());
+                        }
+                    }
+                    Log.i("UtilImportContacts: ", "Count of total contacts with number: " + this.countContacts());
+                    Log.i("UtilImportContacts: ", "Count of total contacts: " + cur.getCount());
+                    Log.i("UtilImportContacts: ", "Count of contacts saved: " + this.countOfContactsSaved);
                 }
-            }
-            Log.i("UtilImportContacts: ", "Count of total contacts with number: " + this.countContacts());
-            Log.i("UtilImportContacts: ", "Count of total contacts: " + cur.getCount());
-            Log.i("UtilImportContacts: ", "Count of contacts saved: " + this.countOfContactsSaved);
+                break;
+            case FROM_GOOGLE_DRIVE:
+                ArrayList<Attendee> attendeesContacts = JsonUtil.jsonToMap(jsonContacts, context);
+                int countContacts = 0;
+                for(Attendee attendee: attendeesContacts) {
+                    this.saveImportedContact(attendee);
+                    countContacts++;
+                    Log.d("UtilImportContacts: ", "Saved imported contact from drive : " + attendee.getAlias() + " in database");
+                }
+                Log.i("UtilImportContacts: ", "Count of total contacts with number from google drive: " + countContacts);
+                Log.i("UtilImportContacts: ", "Count of contacts saved: " + this.countOfContactsSaved);
+                break;
+            default:
+                break;
         }
+
     }
 
     private int countContacts() {
@@ -157,7 +187,7 @@ public class UtilImportContacts extends AsyncTask<Integer, Integer, String> {
         return email;
     }
 
-    private void saveImportedContact(Map<String, String> contact) {
+    private void saveImportedContact(Attendee attendeeContact) {
         // TODO: 16/09/17 agregar una validacion por si tratan de crear un alumno y no tienen cargados los tipos de alumnos.
         String attendeTypeSelected = attendeeType.getName();
         try {
@@ -167,37 +197,31 @@ public class UtilImportContacts extends AsyncTask<Integer, Integer, String> {
             e.printStackTrace();
         }
 
-        Attendee attendee = new Attendee();
-        attendee.setName(contact.get("nameContact"));
-        //attendee.setLastName(attendeeLastName.getText().toString());
-        attendee.setAlias();
-        attendee.setCellphoneNumber(contact.get("phoneContact"));
-        attendee.setEmail(contact.get("emailContact"));
-        attendee.setAttendeeType(attendeeType);
-        attendee.setState("active");
+        attendeeContact.setAlias();
+        attendeeContact.setAttendeeType(attendeeType);
+        attendeeContact.setState("active");
 
         try {
-            attendeeDao.create(attendee);
+            attendeeDao.create(attendeeContact);
         } catch (SQLException e) {
-            Log.e("UtilImportContacts: ", "Cannot save imported contact: " + contact.get("nameContact") + " in database");
+            Log.e("UtilImportContacts: ", "Cannot save imported contact: " + attendeeContact.getAlias() + " in database");
             e.printStackTrace();
         }
 
         publishProgress(this.countOfContactsSaved++);
-        Log.d("UtilImportContacts: ", "Saved imported contact: " + contact.get("nameContact"));
 
-    }
-
-    @Override
-    protected String doInBackground(Integer... integers) {
-        this.importAllContactsFromPhone();
-
-        return "Task Completed.";
     }
 
     @Override
     protected void onPostExecute(String result) {
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected String doInBackground(String... origin) {
+        this.importAllContacts(origin[0]);
+
+        return "Task Completed.";
     }
 
     @Override

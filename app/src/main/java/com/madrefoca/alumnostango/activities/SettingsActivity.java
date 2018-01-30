@@ -96,6 +96,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CREATOR = 2;
 
+    private static final String FROM_PHONE = "phone";
+    private static final String FROM_GOOGLE_DRIVE = "drive";
+
     private GoogleSignInClient mGoogleSignInClient;
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
@@ -254,6 +257,12 @@ public class SettingsActivity extends AppCompatActivity {
                             while ((line = reader.readLine()) != null) {
                                 builder.append(line);
                             }
+
+                            progressBar.setVisibility(View.VISIBLE);
+                            progressBar.setProgress(0);
+                            UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
+                            utilImportContacts.execute(FROM_GOOGLE_DRIVE);
+
                             showMessage(getString(R.string.content_loaded));
                             //mFileContents.setText(builder.toString());
                             Log.i("file loaded ---->", builder.toString());
@@ -419,7 +428,7 @@ public class SettingsActivity extends AppCompatActivity {
         progressBar.setProgress(0);
 
         UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar);
-        utilImportContacts.execute(481);
+        utilImportContacts.execute(FROM_PHONE);
 
     }
 
