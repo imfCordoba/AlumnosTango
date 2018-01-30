@@ -3,9 +3,12 @@ package com.madrefoca.alumnostango.fragments;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
@@ -29,11 +32,25 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.drive.CreateFileActivityOptions;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveClient;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +76,14 @@ public class SettingsFragment extends Fragment {
     private DatabaseHelper databaseHelper = null;
 
     View thisFragment = null;
+
+    private static final String TAG = "alumnos tango";
+    private static final int REQUEST_CODE_SIGN_IN = 0;
+    private static final int REQUEST_CODE_CREATOR = 2;
+    private GoogleSignInClient mGoogleSignInClient;
+    private Bitmap mBitmapToSave;
+    private DriveClient mDriveClient;
+    private DriveResourceClient mDriveResourceClient;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -90,6 +115,14 @@ public class SettingsFragment extends Fragment {
 
         databaseHelper = OpenHelperManager.getHelper(thisFragment.getContext(),DatabaseHelper.class);
 
+        this.signIn();
+
+        // Use the last signed in account here since it already have a Drive scope.
+        mDriveClient = Drive.getDriveClient(thisFragment.getContext(), GoogleSignIn.getLastSignedInAccount(thisFragment.getContext()));
+        // Build a drive resource client.
+        mDriveResourceClient =
+                Drive.getDriveResourceClient(thisFragment.getContext(), GoogleSignIn.getLastSignedInAccount(thisFragment.getContext()));
+
         return thisFragment;
     }
 
@@ -103,6 +136,87 @@ public class SettingsFragment extends Fragment {
         createJsonFolder();
 
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
+    }
+
+    /** Start sign in activity. */
+    private void signIn() {
+        Log.i(TAG, "Start sign in");
+        mGoogleSignInClient = buildGoogleSignInClient();
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+
+    /** Build a Google SignIn client. */
+    private GoogleSignInClient buildGoogleSignInClient() {
+        GoogleSignInOptions signInOptions =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(Drive.SCOPE_FILE)
+                        .build();
+        return GoogleSignIn.getClient(thisFragment.getContext(), signInOptions);
+    }
+
+    /** Create a new file and save it to Drive. */
+    private void saveFileToDrive() {
+        // Start by creating a new contents, and setting a callback.
+        Log.i(TAG, "Creating new contents.");
+        final Bitmap image = mBitmapToSave;
+
+        mDriveResourceClient
+                .createContents()
+                .continueWithTask(
+                        new Continuation<DriveContents, Task<Void>>() {
+                            @Override
+                            public Task<Void> then(@NonNull Task<DriveContents> task) throws Exception {
+                                return createFileIntentSender(task.getResult(), image);
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Failed to create new contents.", e);
+                            }
+                        });
+    }
+
+    /**
+     * Creates an {@link IntentSender} to start a dialog activity with configured {@link
+     * CreateFileActivityOptions} for user to create a new photo in Drive.
+     */
+    private Task<Void> createFileIntentSender(DriveContents driveContents, Bitmap image) {
+        Log.i(TAG, "New contents created.");
+        // Get an output stream for the contents.
+        OutputStream outputStream = driveContents.getOutputStream();
+
+        try {
+            outputStream.write("asdf".getBytes());
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to write file contents.", e);
+        }
+
+        // Create the initial metadata - MIME type and title.
+        // Note that the user will be able to change the title later.
+        MetadataChangeSet metadataChangeSet =
+                new MetadataChangeSet.Builder()
+                        .setMimeType("application/json")
+                        .setTitle("examplefile.json")
+                        .build();
+        // Set up options to configure and display the create file activity.
+        CreateFileActivityOptions createFileActivityOptions =
+                new CreateFileActivityOptions.Builder()
+                        .setInitialMetadata(metadataChangeSet)
+                        .setInitialDriveContents(driveContents)
+                        .build();
+
+        return mDriveClient
+                .newCreateFileActivityIntentSender(createFileActivityOptions)
+                .continueWith(
+                        new Continuation<IntentSender, Void>() {
+                            @Override
+                            public Void then(@NonNull Task<IntentSender> task) throws Exception {
+                                //startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                                return null;
+                            }
+                        });
     }
 
     private void createJsonFolder() {
@@ -157,3 +271,5 @@ public class SettingsFragment extends Fragment {
     }
 
 }
+
+
