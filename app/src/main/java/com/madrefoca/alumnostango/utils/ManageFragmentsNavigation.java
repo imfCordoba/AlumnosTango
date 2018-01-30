@@ -80,10 +80,6 @@ public class ManageFragmentsNavigation {
                 navItemIndex = notificationsIndex;
                 NotificationsFragment notificationsFragment = new NotificationsFragment();
                 return notificationsFragment;
-            case TAG_SETTINGS:
-                navItemIndex = settingsIndex;
-                SettingsFragment settingsFragment = new SettingsFragment();
-                return settingsFragment;
             case TAG_ATTENDEE_TYPES:
                 navItemIndex = attendeeTypesIndex;
                 AttendeeTypesFragment attendeeTypesFragment = new AttendeeTypesFragment();
@@ -127,9 +123,6 @@ public class ManageFragmentsNavigation {
                 break;
             case TAG_NOTIFICATIONS:
                 navItemIndex = notificationsIndex;
-                break;
-            case TAG_SETTINGS:
-                navItemIndex = settingsIndex;
                 break;
             case TAG_ATTENDEE_TYPES:
                 navItemIndex = attendeeTypesIndex;
