@@ -174,7 +174,7 @@ public abstract class BaseDemoActivity extends Activity {
                 new OpenFileActivityOptions.Builder()
                         .setSelectionFilter(
                                 Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE))
-                        .setActivityTitle(getString(R.string.select_folder))
+                        //.setActivityTitle(getString(R.string.select_folder))
                         .build();
         return pickItem(openOptions);
     }

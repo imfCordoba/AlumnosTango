@@ -1,6 +1,7 @@
 package com.madrefoca.alumnostango.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -83,9 +84,18 @@ public class SettingsActivity extends AppCompatActivity {
     private DatabaseHelper databaseHelper = null;
 
     private static final String TAG = "alumnos tango";
-    private static final int REQUEST_CODE_SIGN_IN = 0;
+    /**
+     * Request code for google sign-in
+     */
+    protected static final int REQUEST_CODE_SIGN_IN = 0;
+
+    /**
+     * Request code for the Drive picker
+     */
     protected static final int REQUEST_CODE_OPEN_ITEM = 1;
+
     private static final int REQUEST_CODE_CREATOR = 2;
+
     private GoogleSignInClient mGoogleSignInClient;
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
@@ -126,6 +136,46 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles resolution callbacks.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                if (resultCode != RESULT_OK) {
+                    // Sign-in may fail or be cancelled by the user. For this sample, sign-in is
+                    // required and is fatal. For apps where sign-in is optional, handle
+                    // appropriately
+                    Log.e(TAG, "Sign-in failed.");
+                    finish();
+                    return;
+                }
+
+                Task<GoogleSignInAccount> getAccountTask =
+                        GoogleSignIn.getSignedInAccountFromIntent(data);
+                if (getAccountTask.isSuccessful()) {
+                    initializeDriveClient(getAccountTask.getResult());
+                } else {
+                    Log.e(TAG, "Sign-in failed.");
+                    finish();
+                }
+                break;
+            case REQUEST_CODE_OPEN_ITEM:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveId = data.getParcelableExtra(
+                            OpenFileActivityOptions.EXTRA_RESPONSE_DRIVE_ID);
+                    mOpenItemTaskSource.setResult(driveId);
+                } else {
+                    Log.e(TAG, "Unable to open file.");
+                    mOpenItemTaskSource.setException(new RuntimeException("Unable to open file"));
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     /** Start sign in activity. */
     private void signIn2() {
         Log.i(TAG, "Start sign in");
@@ -164,7 +214,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     protected void onDriveClientReady() {
-        pickTextFile()
+        pickJsonFile()
                 .addOnSuccessListener(this,
                         new OnSuccessListener<DriveId>() {
                             @Override
@@ -202,7 +252,7 @@ public class SettingsActivity extends AppCompatActivity {
                             StringBuilder builder = new StringBuilder();
                             String line;
                             while ((line = reader.readLine()) != null) {
-                                builder.append(line).append("\n");
+                                builder.append(line);
                             }
                             showMessage(getString(R.string.content_loaded));
                             //mFileContents.setText(builder.toString());
@@ -235,7 +285,7 @@ public class SettingsActivity extends AppCompatActivity {
      *
      * @return Task that resolves with the selected item's ID.
      */
-    protected Task<DriveId> pickTextFile() {
+    protected Task<DriveId> pickJsonFile() {
         OpenFileActivityOptions openOptions =
                 new OpenFileActivityOptions.Builder()
                         .setSelectionFilter(Filters.eq(SearchableField.MIME_TYPE, "application/json"))
