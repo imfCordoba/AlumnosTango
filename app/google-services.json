@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "666291348231",
+    "firebase_url": "https://alumnos-tango.firebaseio.com",
+    "project_id": "alumnos-tango",
+    "storage_bucket": "alumnos-tango.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666291348231:android:7aa73f1655984bd6",
+        "android_client_info": {
+          "package_name": "com.madrefoca.alumnostango"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666291348231-mre8brfqpuqfip7lcqpj9n8r8snpq3fh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madrefoca.alumnostango",
+            "certificate_hash": "badc7dec3ee55c30277109ba220e82f84135be77"
+          }
+        },
+        {
+          "client_id": "666291348231-6qh6ago594jfjnrac6ce5es5e16o4e5g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNhDUt06z-kJr8gH_9C8SqP2wF_uNic3E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666291348231-6qh6ago594jfjnrac6ce5es5e16o4e5g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
