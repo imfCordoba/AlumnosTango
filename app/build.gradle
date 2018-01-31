@@ -3,6 +3,10 @@ ext {
     ormlite_version = "5.0"
 }
 android {
+    signingConfigs {
+        config {
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
@@ -22,15 +26,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.google.code.findbugs'
     })
-    compile("com.j256.ormlite:ormlite-core:${ormlite_version}")
-    compile("com.j256.ormlite:ormlite-jdbc:${ormlite_version}")
+    compile "com.j256.ormlite:ormlite-core:${ormlite_version}"
+    compile "com.j256.ormlite:ormlite-jdbc:${ormlite_version}"
     compile "com.j256.ormlite:ormlite-android:${ormlite_version}"
-
     //Android Floating Action Button based on Material Design specification
     //https://github.com/Clans/FloatingActionButton
     compile 'com.android.support:appcompat-v7:26.1.0'
@@ -48,6 +51,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.google.android.gms:play-services-drive:11.8.0'
     compile 'com.google.android.gms:play-services-auth:11.8.0'
-
 }
 apply plugin: 'com.google.gms.google-services'

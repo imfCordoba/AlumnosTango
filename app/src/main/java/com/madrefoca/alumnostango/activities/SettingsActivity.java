@@ -8,9 +8,13 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v13.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +50,7 @@ import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.Payment;
 import com.madrefoca.alumnostango.utils.JsonUtil;
+import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
 
 import java.io.BufferedReader;
@@ -121,13 +126,6 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        int hasReadContactsPermission = ActivityCompat.checkSelfPermission(this.getApplicationContext(),
-                Manifest.permission.READ_CONTACTS);
-        if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_CONTACTS},
-                    REQUEST_CODE_ASK_PERMISSIONS);
-        }
-
         ButterKnife.bind(this, this);
 
         databaseHelper = OpenHelperManager.getHelper(this.getApplicationContext(),DatabaseHelper.class);
@@ -137,6 +135,8 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        this.initDialog();
     }
 
     /**
@@ -152,6 +152,9 @@ public class SettingsActivity extends AppCompatActivity {
                     // required and is fatal. For apps where sign-in is optional, handle
                     // appropriately
                     Log.e(TAG, "Sign-in failed.");
+                    Toast.makeText(getApplicationContext(),
+                            "Sign-in failed.",
+                            Toast.LENGTH_LONG).show();
                     finish();
                     return;
                 }
@@ -162,6 +165,10 @@ public class SettingsActivity extends AppCompatActivity {
                     initializeDriveClient(getAccountTask.getResult());
                 } else {
                     Log.e(TAG, "Sign-in failed.");
+                    Log.e(TAG, "Sign-in failed.");
+                    Toast.makeText(getApplicationContext(),
+                            "Sign-in failed.",
+                            Toast.LENGTH_LONG).show();
                     finish();
                 }
                 break;
@@ -172,6 +179,10 @@ public class SettingsActivity extends AppCompatActivity {
                     mOpenItemTaskSource.setResult(driveId);
                 } else {
                     Log.e(TAG, "Unable to open file.");
+                    Log.e(TAG, "Sign-in failed.");
+                    Toast.makeText(getApplicationContext(),
+                            "Sign-in failed.",
+                            Toast.LENGTH_LONG).show();
                     mOpenItemTaskSource.setException(new RuntimeException("Unable to open file"));
                 }
                 break;
@@ -444,6 +455,8 @@ public class SettingsActivity extends AppCompatActivity {
     protected void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
+
+
 
     protected DriveClient getDriveClient() {
         return mDriveClient;
