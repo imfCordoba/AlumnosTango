@@ -86,6 +86,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
     private Bundle bundle;
     Event event = null;
     List<Attendee> attendeeList = null;
+    View thisFragment;
 
     public AttendeeEventPaymentFragment() {
         // Required empty public constructor
@@ -95,7 +96,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View thisFragment = inflater.inflate(R.layout.fragment_attendee_event_payment, container, false);
+        thisFragment = inflater.inflate(R.layout.fragment_attendee_event_payment, container, false);
 
         bundle = new Bundle();
         this.bundle = this.getArguments();
@@ -135,12 +136,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
             e.printStackTrace();
         }
 
-        this.loadAttendees();
-
-        // Adding items to listview
-        attendeesListAdapter = new ArrayAdapter<String>(thisFragment.getContext(), R.layout.list_item,
-                R.id.attendee_name_lastname, attendeesArrayList);
-        attendeeListView.setAdapter(attendeesListAdapter);
+        this.loadAttendees(thisFragment);
 
         //set listener to the list for the clicks
         attendeeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -273,7 +269,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
                 textView.setTextColor(Color.GREEN);
                 snackbar.show();
 
-                this.loadAttendees();
+                this.loadAttendees(thisFragment);
                 attendeesListAdapter.notifyDataSetChanged();
 
             } catch (SQLException e) {
@@ -292,7 +288,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
         textViewAmount.setText("");
     }
 
-    private void loadAttendees() {
+    private void loadAttendees(View thisFragment) {
 
         Log.d("AttendeeEventPaymentF: ", "put the attendees in the view...");
         attendeesArrayList.clear();
@@ -311,6 +307,11 @@ public class AttendeeEventPaymentFragment extends Fragment {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
+            attendeesListAdapter = new ArrayAdapter<String>(thisFragment.getContext(), R.layout.list_item,
+                    R.id.attendee_name_lastname, attendeesArrayList);
+            attendeeListView.setAdapter(attendeesListAdapter);
+            attendeeInputSearch.setText("");
         }
     }
 }
