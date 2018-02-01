@@ -72,5 +72,6 @@
         luego introduzca esa palabra clave en este campo para importar solo los contactos con esa palabra clave.
         Si no desea filtrar, no introduzca nada.
     </string>
+    <string name="filter_import_button">Importar</string>
 
 </resources>

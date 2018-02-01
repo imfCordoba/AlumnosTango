@@ -18,18 +18,5 @@
             android:hint="@string/filter_word"
             android:inputType="text"
             android:singleLine="true" />
-
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="@string/filter_name_help" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 </ScrollView>

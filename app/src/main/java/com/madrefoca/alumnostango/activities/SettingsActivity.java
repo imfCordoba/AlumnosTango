@@ -1,25 +1,23 @@
 package com.madrefoca.alumnostango.activities;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.v13.app.ActivityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -48,15 +46,10 @@ import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
-import com.madrefoca.alumnostango.model.Payment;
 import com.madrefoca.alumnostango.utils.JsonUtil;
-import com.madrefoca.alumnostango.utils.ManageFragmentsNavigation;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -85,6 +78,10 @@ public class SettingsActivity extends AppCompatActivity {
     @Nullable
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @Nullable
+    @BindView(R.id.contact_filter_word)
+    EditText contactFilterWord;
 
     private DatabaseHelper databaseHelper = null;
 
@@ -115,10 +112,21 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
 
+    private AlertDialog.Builder filterContactsDialog;
+
+    private View view;
+
     @Override
     protected void onStart() {
         super.onStart();
         signIn();
+
+        int hasReadContactsPermission = ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_CONTACTS);
+        if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_CONTACTS},
+                    REQUEST_CODE_ASK_PERMISSIONS);
+        }
     }
 
     @Override
@@ -188,13 +196,6 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /** Start sign in activity. */
-    private void signIn2() {
-        Log.i(TAG, "Start sign in");
-        mGoogleSignInClient = buildGoogleSignInClient();
-        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
     }
 
     /**
@@ -417,6 +418,30 @@ public class SettingsActivity extends AppCompatActivity {
                         });
     }
 
+    private void initDialog()  {
+        filterContactsDialog = new AlertDialog.Builder(this);
+        // Get the layout inflater
+        LayoutInflater inflater = this.getLayoutInflater();
+        view = inflater.inflate(R.layout.dialog_contacts_filter, null);
+        contactFilterWord = (EditText)view.findViewById(R.id.contact_filter_word);
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        filterContactsDialog.setView(view)
+                // Add action buttons
+                .setPositiveButton(R.string.filter_import_button, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        progressBar.setProgress(0);
+
+                        UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar);
+                        utilImportContacts.setFilterWord(contactFilterWord.getText().toString());
+                        utilImportContacts.execute(FROM_PHONE);
+                    }
+                });
+
+    }
+
     @Optional
     @OnClick(R.id.exportDbButton)
     public void onClickExportDatabase() {
@@ -435,12 +460,8 @@ public class SettingsActivity extends AppCompatActivity {
     @Optional
     @OnClick(R.id.importContactsButton)
     public void onClickImportContactsButton() {
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setProgress(0);
-
-        UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar);
-        utilImportContacts.execute(FROM_PHONE);
-
+        this.removeView();
+        filterContactsDialog.show();
     }
 
     @Optional
@@ -454,6 +475,12 @@ public class SettingsActivity extends AppCompatActivity {
      */
     protected void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void removeView(){
+        if(view.getParent()!=null) {
+            ((ViewGroup) view.getParent()).removeView(view);
+        }
     }
 
 

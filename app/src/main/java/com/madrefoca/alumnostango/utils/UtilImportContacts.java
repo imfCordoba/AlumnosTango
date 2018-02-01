@@ -48,6 +48,8 @@ public class UtilImportContacts extends AsyncTask<String, Integer, String> {
 
     private String jsonContacts;
 
+    private String filterWord;
+
     public UtilImportContacts(Context context, ProgressBar progressBar) {
         this.context = context;
         this.progressBar = progressBar;
@@ -99,16 +101,21 @@ public class UtilImportContacts extends AsyncTask<String, Integer, String> {
 
                             String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
 
-                            Attendee attendeeContact = new Attendee();
-                            attendeeContact.setName(cur.getString(cur.getColumnIndex(Build.VERSION.SDK_INT
+                            //apply filter
+                            String contactName = cur.getString(cur.getColumnIndex(Build.VERSION.SDK_INT
                                     >= Build.VERSION_CODES.HONEYCOMB ?
                                     ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
-                                    ContactsContract.Contacts.DISPLAY_NAME)));
-                            attendeeContact.setCellphoneNumber(retrieveContactNumber(id));
-                            attendeeContact.setEmail(retrieveContactEmail(id));
+                                    ContactsContract.Contacts.DISPLAY_NAME));
+                            if (contactName.toLowerCase().contains(this.getFilterWord().toLowerCase())) {
+                                Attendee attendeeContact = new Attendee();
+                                attendeeContact.setName(contactName);
+                                attendeeContact.setCellphoneNumber(retrieveContactNumber(id));
+                                attendeeContact.setEmail(retrieveContactEmail(id));
 
-                            this.saveImportedContact(attendeeContact);
-                            Log.d("UtilImportContacts: ", "Saved imported contact from phone: " + attendeeContact.getAlias());
+                                this.saveImportedContact(attendeeContact);
+                                Log.d("UtilImportContacts: ", "Saved imported contact from phone: " + attendeeContact.getAlias());
+                            }
+
                         }
                     }
                     Log.i("UtilImportContacts: ", "Count of total contacts with number: " + this.countContacts());
@@ -143,7 +150,13 @@ public class UtilImportContacts extends AsyncTask<String, Integer, String> {
         if (cur.getCount() > 0) {
             while (cur.moveToNext()) {
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    numberOfContacts++;
+                    String contactName = cur.getString(cur.getColumnIndex(Build.VERSION.SDK_INT
+                            >= Build.VERSION_CODES.HONEYCOMB ?
+                            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
+                            ContactsContract.Contacts.DISPLAY_NAME));
+                    if (contactName.toLowerCase().contains((this.getFilterWord() != null) ?  this.getFilterWord().toLowerCase() : "")) {
+                        numberOfContacts++;
+                    }
                 }
             }
         }
@@ -232,6 +245,14 @@ public class UtilImportContacts extends AsyncTask<String, Integer, String> {
     @Override
     protected void onProgressUpdate(Integer... values) {
         progressBar.setProgress(values[0]);
+    }
+
+    public String getFilterWord() {
+        return filterWord;
+    }
+
+    public void setFilterWord(String filterWord) {
+        this.filterWord = filterWord;
     }
 }
 
