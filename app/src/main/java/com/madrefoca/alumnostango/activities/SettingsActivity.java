@@ -384,7 +384,7 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        String attendeesJson = JsonUtil.toJSon(attendees);
+        String attendeesJson = JsonUtil.attendeesToJSon(attendees);
         Log.i("test", attendeesJson);
         try {
             outputStream.write(attendeesJson.getBytes());
@@ -452,6 +452,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         //create folder in internal storage if does not exist.
         //createJsonFolder();
+        saveFileToDrive();
+
+        Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
+    }
+
+    @Optional
+    @OnClick(R.id.exportEventsButton)
+    public void onClickExportEventsButton() {
+
+        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
+        this.initializeDriveClient(signInAccount);
         saveFileToDrive();
 
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());

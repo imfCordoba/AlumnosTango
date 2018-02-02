@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeType;
+import com.madrefoca.alumnostango.model.Event;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class JsonUtil {
 
-    public static String toJSon(List<Attendee> attendees) {
+    public static String attendeesToJSon(List<Attendee> attendees) {
         JSONObject jsonObj = new JSONObject();
         JSONArray jsonAttendeesArray = new JSONArray();
 
@@ -53,6 +54,42 @@ public class JsonUtil {
 
         }
         return jsonObj.toString();
+    }
+
+    public static String eventsToJSon(List<Event> events) {
+        JSONObject jsonEvents = new JSONObject();
+        JSONArray jsonEventsArray = new JSONArray();
+
+        for(Event event : events) {
+
+            try {
+                // Here we convert Java Object to JSON
+                JSONObject jsonEvent = new JSONObject();
+                jsonEvent.put("idEvent", event.getIdEvent());
+                jsonEvent.put("idPlace", event.getPlace().getIdplace());
+                jsonEvent.put("name", event.getName());
+                jsonEvent.put("day", event.getDay());
+                jsonEvent.put("month", event.getMonth());
+                jsonEvent.put("year", event.getYear());
+                jsonEvent.put("hour", event.getHour());
+                jsonEvent.put("minutes", event.getMinutes());
+                jsonEvent.put("paymentAmount", event.getPaymentAmount());
+                jsonEvent.put("state", event.getState());
+
+                jsonEventsArray.put(jsonEvent);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+
+            try {
+                jsonEvents.put("events",jsonEventsArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return jsonEvents.toString();
     }
 
 

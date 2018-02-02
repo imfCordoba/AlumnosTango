@@ -40,6 +40,9 @@ public class Event {
     @DatabaseField
     private Double paymentAmount;
 
+    @DatabaseField
+    private String state;
+
     public Event() {
     }
 
@@ -123,5 +126,13 @@ public class Event {
 
     public void setPaymentAmount(Double paymentAmount) {
         this.paymentAmount = paymentAmount;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }
