@@ -92,7 +92,6 @@ public class JsonUtil {
         return jsonEvents.toString();
     }
 
-
     public static ArrayList<Attendee> jsonToMap(String jsonContacts, final Context context) {
         Log.i("JsonUtil", "jsonContacts string: " + jsonContacts);
         ArrayList<Attendee> attendeeContacts = new ArrayList<Attendee>();

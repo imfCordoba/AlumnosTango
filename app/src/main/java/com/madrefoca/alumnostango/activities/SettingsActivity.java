@@ -46,6 +46,7 @@ import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
+import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.utils.JsonUtil;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
 
@@ -85,36 +86,22 @@ public class SettingsActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper = null;
 
-    private static final String TAG = "alumnos tango";
-    /**
-     * Request code for google sign-in
-     */
+    private static final String TAG = "Settings activity";
     protected static final int REQUEST_CODE_SIGN_IN = 0;
-
-    /**
-     * Request code for the Drive picker
-     */
     protected static final int REQUEST_CODE_OPEN_ITEM = 1;
-
     private static final int REQUEST_CODE_CREATOR = 2;
-
     private static final String FROM_PHONE = "phone";
     private static final String FROM_GOOGLE_DRIVE = "drive";
 
-    private GoogleSignInClient mGoogleSignInClient;
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
-
     private Dao<Attendee, Integer> attendeeDao;
-
-    /**
-     * Tracks completion of the drive picker
-     */
+    private Dao<Event, Integer> eventsDao;
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
-
     private AlertDialog.Builder filterContactsDialog;
-
     private View view;
+    private String tableToExport;
+    private String fileName;
 
     @Override
     protected void onStart() {
@@ -140,6 +127,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         try {
             attendeeDao = databaseHelper.getAttendeeDao();
+            eventsDao = databaseHelper.getEventsDao();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -235,7 +223,6 @@ public class SettingsActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DriveId driveId) {
                                 retrieveContents(driveId.asDriveFile());
-                                Log.i("exitouuu", "----------------------++++++++++++++++++++++++---------------------");
                             }
                         })
                 .addOnFailureListener(this, new OnFailureListener() {
@@ -336,17 +323,6 @@ public class SettingsActivity extends AppCompatActivity {
         return mOpenItemTaskSource.getTask();
     }
 
-
-
-    /** Build a Google SignIn client. */
-    private GoogleSignInClient buildGoogleSignInClient() {
-        GoogleSignInOptions signInOptions =
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestScopes(Drive.SCOPE_FILE)
-                        .build();
-        return GoogleSignIn.getClient(getApplicationContext(), signInOptions);
-    }
-
     /** Create a new file and save it to Drive. */
     private void saveFileToDrive() {
         // Start by creating a new contents, and setting a callback.
@@ -375,21 +351,15 @@ public class SettingsActivity extends AppCompatActivity {
      * CreateFileActivityOptions} for user to create a new photo in Drive.
      */
     private Task<Void> createFileIntentSender(DriveContents driveContents) {
-        Log.i(TAG, "New contents created.");
         // Get an output stream for the contents.
         OutputStream outputStream = driveContents.getOutputStream();
-        List<Attendee> attendees = null;
+        String jsonFile = prepareJsonToSave(tableToExport);
+
+        Log.i(TAG, "Json content from " + tableToExport + ": " + jsonFile);
         try {
-            attendees = attendeeDao.queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        String attendeesJson = JsonUtil.attendeesToJSon(attendees);
-        Log.i("test", attendeesJson);
-        try {
-            outputStream.write(attendeesJson.getBytes());
+            outputStream.write(jsonFile.getBytes());
         } catch (IOException e) {
-            Log.w(TAG, "Unable to write file contents.", e);
+            Log.e(TAG, "Unable to write file contents.", e);
         }
 
         // Create the initial metadata - MIME type and title.
@@ -397,7 +367,7 @@ public class SettingsActivity extends AppCompatActivity {
         MetadataChangeSet metadataChangeSet =
                 new MetadataChangeSet.Builder()
                         .setMimeType("application/json")
-                        .setTitle("attendees.json")
+                        .setTitle(fileName + ".json")
                         .build();
         // Set up options to configure and display the create file activity.
         CreateFileActivityOptions createFileActivityOptions =
@@ -412,10 +382,39 @@ public class SettingsActivity extends AppCompatActivity {
                         new Continuation<IntentSender, Void>() {
                             @Override
                             public Void then(@NonNull Task<IntentSender> task) throws Exception {
-                                startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                                startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR,
+                                        null, 0, 0, 0);
                                 return null;
                             }
                         });
+    }
+
+    private String prepareJsonToSave(String tableToExport) {
+        String jsonString;
+        switch (tableToExport) {
+            case "attendees":
+                List<Attendee> attendees = null;
+                try {
+                    attendees = attendeeDao.queryForAll();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                jsonString = JsonUtil.attendeesToJSon(attendees);
+                break;
+            case "events":
+                List<Event> events = null;
+                try {
+                    events = eventsDao.queryForAll();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                jsonString = JsonUtil.eventsToJSon(events);
+                break;
+            default:
+                jsonString = "";
+                break;
+        }
+        return jsonString;
     }
 
     private void initDialog()  {
@@ -452,6 +451,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         //create folder in internal storage if does not exist.
         //createJsonFolder();
+        tableToExport = "attendees";
+        fileName = getString(R.string.file_name_attendees);
         saveFileToDrive();
 
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
@@ -463,6 +464,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
         this.initializeDriveClient(signInAccount);
+        tableToExport = "events";
+        fileName = getString(R.string.file_name_events);
         saveFileToDrive();
 
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
