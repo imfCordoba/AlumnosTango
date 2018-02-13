@@ -76,5 +76,6 @@
     <string name="filter_import_button">Importar</string>
     <string name="file_name_attendees">mis-alumnos</string>
     <string name="file_name_events">mis-eventos</string>
+    <string name="file_name_all">full-backup</string>
 
 </resources>

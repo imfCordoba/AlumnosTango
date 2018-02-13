@@ -159,7 +159,7 @@ public class SettingsActivity extends AppCompatActivity {
                 Task<GoogleSignInAccount> getAccountTask =
                         GoogleSignIn.getSignedInAccountFromIntent(data);
                 if (getAccountTask.isSuccessful()) {
-                    initializeDriveClient(getAccountTask.getResult());
+                    initializeDriveClient();
                 } else {
                     Log.e(TAG, "Sign-in failed.");
                     Log.e(TAG, "Sign-in failed.");
@@ -196,7 +196,7 @@ public class SettingsActivity extends AppCompatActivity {
         requiredScopes.add(Drive.SCOPE_APPFOLDER);
         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
         if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
-            initializeDriveClient(signInAccount);
+            initializeDriveClient();
         } else {
             GoogleSignInOptions signInOptions =
                     new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -212,7 +212,8 @@ public class SettingsActivity extends AppCompatActivity {
      * Continues the sign-in process, initializing the Drive clients with the current
      * user's account.
      */
-    private void initializeDriveClient(GoogleSignInAccount signInAccount) {
+    private void initializeDriveClient() {
+        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
         mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
         mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
     }
@@ -261,7 +262,10 @@ public class SettingsActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.VISIBLE);
                             progressBar.setProgress(0);
 
-                            switch (workingTable) {
+                            UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
+                            utilImportContacts.execute(FROM_GOOGLE_DRIVE);
+
+                            /*switch (workingTable) {
                                 case "attendees":
                                     UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
                                     utilImportContacts.execute(FROM_GOOGLE_DRIVE);
@@ -271,7 +275,7 @@ public class SettingsActivity extends AppCompatActivity {
                                     break;
                                 case "all":
                                     break;
-                            }
+                            }*/
 
                             showMessage(getString(R.string.content_loaded));
                             //mFileContents.setText(builder.toString());
@@ -401,25 +405,26 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private String prepareJsonToSave(String tableToExport) {
-        String jsonString;
+        String jsonString = "";
         switch (tableToExport) {
             case "attendees":
-                List<Attendee> attendees = null;
                 try {
-                    attendees = attendeeDao.queryForAll();
+                    List<Attendee> attendees = attendeeDao.queryForAll();
+                    jsonString = JsonUtil.attendeesToJSon(attendees);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                jsonString = JsonUtil.attendeesToJSon(attendees);
                 break;
             case "events":
-                List<Event> events = null;
                 try {
-                    events = eventsDao.queryForAll();
+                    List<Event> events = eventsDao.queryForAll();
+                    jsonString = JsonUtil.eventsToJSon(events);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                jsonString = JsonUtil.eventsToJSon(events);
+                break;
+            case "all":
+                jsonString = JsonUtil.allTablesToJSon(databaseHelper);
                 break;
             default:
                 jsonString = "";
@@ -457,8 +462,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void onClickExportDatabase() {
         //save database
         //path: /data/data/com.madrefoca.alumnostango/databases/AlumnosTango.db
-        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
-        this.initializeDriveClient(signInAccount);
+        this.initializeDriveClient();
 
         //create folder in internal storage if does not exist.
         //createJsonFolder();
@@ -472,11 +476,20 @@ public class SettingsActivity extends AppCompatActivity {
     @Optional
     @OnClick(R.id.exportEventsButton)
     public void onClickExportEventsButton() {
-
-        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
-        this.initializeDriveClient(signInAccount);
+        this.initializeDriveClient();
         workingTable = "events";
         fileName = getString(R.string.file_name_events);
+        saveFileToDrive();
+
+        Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
+    }
+
+    @Optional
+    @OnClick(R.id.saveAllInDriveButton)
+    public void onClickSaveAllInDriveButton() {
+        this.initializeDriveClient();
+        workingTable = "all";
+        fileName = getString(R.string.file_name_all);
         saveFileToDrive();
 
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());

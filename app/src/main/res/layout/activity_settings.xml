@@ -47,6 +47,13 @@
             android:text="Importar contactos desde el teléfono"
             android:theme="@style/PrimaryButton" />
 
+        <Button
+            android:id="@+id/saveAllInDriveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar todo en drive"
+            android:theme="@style/PrimaryButton" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

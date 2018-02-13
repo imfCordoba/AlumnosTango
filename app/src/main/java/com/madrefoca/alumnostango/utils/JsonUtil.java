@@ -3,13 +3,21 @@ package com.madrefoca.alumnostango.utils;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.j256.ormlite.dao.Dao;
+import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeType;
 import com.madrefoca.alumnostango.model.Event;
+import com.madrefoca.alumnostango.model.EventType;
+import com.madrefoca.alumnostango.model.PaymentType;
+import com.madrefoca.alumnostango.model.Place;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,5 +132,103 @@ public class JsonUtil {
         }
 
         return attendeeContacts;
+    }
+
+    public static String allTablesToJSon(DatabaseHelper databaseHelper) {
+        Dao<Place, Integer> placeDao;
+        Dao<EventType, Integer> eventTypeDao;
+        Dao<PaymentType, Integer> paymentTypeDao;
+
+        List<Place> places = null;
+        List<EventType> eventTypes = null;
+        List<PaymentType> paymentTypes = null;
+
+        try {
+            placeDao = databaseHelper.getPlacesDao();
+            places = placeDao.queryForAll();
+
+            eventTypeDao = databaseHelper.getEventTypesDao();
+            eventTypes = eventTypeDao.queryForAll();
+
+            paymentTypeDao = databaseHelper.getPaymentTypesDao();
+            paymentTypes = paymentTypeDao.queryForAll();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("places", placesToJson(places));
+            jsonObj.put("eventTypes", eventTypesToJson(eventTypes));
+            jsonObj.put("paymentTypes", paymentTypesToJson(paymentTypes));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObj.toString();
+    }
+
+    public static JSONArray placesToJson (List<Place> places) {
+        JSONArray jsonPlacesArray = new JSONArray();
+
+        for(Place place : places) {
+            try {
+                // Here we convert Java Object to JSON
+                JSONObject jsonPlace = new JSONObject();
+                jsonPlace.put("name", place.getName());
+                jsonPlace.put("address", place.getAddress());
+                jsonPlace.put("gpsLocation", place.getGpsLocation());
+                jsonPlace.put("phone", place.getPhone());
+                jsonPlace.put("email", place.getEmail());
+                jsonPlace.put("facebookLink", place.getFacebookLink());
+
+                jsonPlacesArray.put(jsonPlace);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        return jsonPlacesArray;
+    }
+
+    public static JSONArray eventTypesToJson (List<EventType> eventTypes) {
+        JSONArray jsonEventTypesArray = new JSONArray();
+
+        for(EventType eventType : eventTypes) {
+            try {
+                JSONObject jsonEventType = new JSONObject();
+                jsonEventType.put("idEventType", eventType.getIdEventType());
+                jsonEventType.put("name", eventType.getName());
+                jsonEventType.put("description", eventType.getDescription());
+
+                jsonEventTypesArray.put(jsonEventType);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        return jsonEventTypesArray;
+    }
+
+    public static JSONArray paymentTypesToJson (List<PaymentType> paymentTypes) {
+        JSONArray jsonPaymentTypesArray = new JSONArray();
+
+        for(PaymentType paymentType : paymentTypes) {
+            try {
+                JSONObject jsonPaymentType = new JSONObject();
+                jsonPaymentType.put("idPaymentType", paymentType.getIdPaymentType());
+                jsonPaymentType.put("name", paymentType.getName());
+                jsonPaymentType.put("description", paymentType.getDescription());
+
+                jsonPaymentTypesArray.put(jsonPaymentType);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        return jsonPaymentTypesArray;
     }
 }
