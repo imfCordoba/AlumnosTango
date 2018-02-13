@@ -27,7 +27,6 @@ import java.util.Map;
  */
 
 public class UtilImportContacts extends AsyncTask<String, Integer, String> {
-    // TODO: 20/01/18  The application may be doing too much work on its main thread. investigate this message.
 
     private ContentResolver contentResolver;
     private DatabaseHelper databaseHelper;

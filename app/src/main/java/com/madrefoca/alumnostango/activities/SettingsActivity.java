@@ -49,6 +49,7 @@ import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.utils.JsonUtil;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
+import com.madrefoca.alumnostango.utils.UtilImportEvents;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -100,7 +101,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
     private AlertDialog.Builder filterContactsDialog;
     private View view;
-    private String tableToExport;
+    private String workingTable;
     private String fileName;
 
     @Override
@@ -259,8 +260,18 @@ public class SettingsActivity extends AppCompatActivity {
 
                             progressBar.setVisibility(View.VISIBLE);
                             progressBar.setProgress(0);
-                            UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
-                            utilImportContacts.execute(FROM_GOOGLE_DRIVE);
+
+                            switch (workingTable) {
+                                case "attendees":
+                                    UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
+                                    utilImportContacts.execute(FROM_GOOGLE_DRIVE);
+                                    break;
+                                case "event":
+                                    UtilImportEvents utilImportEvents = new UtilImportEvents(getApplicationContext(), progressBar, builder.toString());
+                                    break;
+                                case "all":
+                                    break;
+                            }
 
                             showMessage(getString(R.string.content_loaded));
                             //mFileContents.setText(builder.toString());
@@ -353,9 +364,9 @@ public class SettingsActivity extends AppCompatActivity {
     private Task<Void> createFileIntentSender(DriveContents driveContents) {
         // Get an output stream for the contents.
         OutputStream outputStream = driveContents.getOutputStream();
-        String jsonFile = prepareJsonToSave(tableToExport);
+        String jsonFile = prepareJsonToSave(workingTable);
 
-        Log.i(TAG, "Json content from " + tableToExport + ": " + jsonFile);
+        Log.i(TAG, "Json content from " + workingTable + ": " + jsonFile);
         try {
             outputStream.write(jsonFile.getBytes());
         } catch (IOException e) {
@@ -451,7 +462,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         //create folder in internal storage if does not exist.
         //createJsonFolder();
-        tableToExport = "attendees";
+        workingTable = "attendees";
         fileName = getString(R.string.file_name_attendees);
         saveFileToDrive();
 
@@ -464,7 +475,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
         this.initializeDriveClient(signInAccount);
-        tableToExport = "events";
+        workingTable = "events";
         fileName = getString(R.string.file_name_events);
         saveFileToDrive();
 
@@ -496,8 +507,6 @@ public class SettingsActivity extends AppCompatActivity {
             ((ViewGroup) view.getParent()).removeView(view);
         }
     }
-
-
 
     protected DriveClient getDriveClient() {
         return mDriveClient;
