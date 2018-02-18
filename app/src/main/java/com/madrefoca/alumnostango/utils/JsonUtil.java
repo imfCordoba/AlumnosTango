@@ -7,9 +7,12 @@ import android.widget.Toast;
 import com.j256.ormlite.dao.Dao;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
+import com.madrefoca.alumnostango.model.AttendeeEventPayment;
 import com.madrefoca.alumnostango.model.AttendeeType;
+import com.madrefoca.alumnostango.model.Coupon;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.model.EventType;
+import com.madrefoca.alumnostango.model.Payment;
 import com.madrefoca.alumnostango.model.PaymentType;
 import com.madrefoca.alumnostango.model.Place;
 
@@ -138,10 +141,22 @@ public class JsonUtil {
         Dao<Place, Integer> placeDao;
         Dao<EventType, Integer> eventTypeDao;
         Dao<PaymentType, Integer> paymentTypeDao;
+        Dao<AttendeeType, Integer> attendeeTypeDao;
+        Dao<Attendee, Integer> attendeeDao;
+        Dao<Event, Integer> eventDao;
+        Dao<Coupon, Integer> couponDao;
+        Dao<Payment, Integer> paymentDao;
+        Dao<AttendeeEventPayment, Integer> attendeeEventPaymentDao;
 
         List<Place> places = null;
         List<EventType> eventTypes = null;
         List<PaymentType> paymentTypes = null;
+        List<AttendeeType> attendeeTypes = null;
+        List<Attendee> attendees = null;
+        List<Event> events = null;
+        List<Coupon> coupons = null;
+        List<Payment> payments = null;
+        List<AttendeeEventPayment> attendeeEventPayments = null;
 
         try {
             placeDao = databaseHelper.getPlacesDao();
@@ -153,15 +168,40 @@ public class JsonUtil {
             paymentTypeDao = databaseHelper.getPaymentTypesDao();
             paymentTypes = paymentTypeDao.queryForAll();
 
+            attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
+            attendeeTypes = attendeeTypeDao.queryForAll();
+
+            attendeeDao = databaseHelper.getAttendeeDao();
+            attendees = attendeeDao.queryForAll();
+
+            eventDao = databaseHelper.getEventsDao();
+            events = eventDao.queryForAll();
+
+            couponDao = databaseHelper.getCouponsDao();
+            coupons = couponDao.queryForAll();
+
+            paymentDao = databaseHelper.getPaymentsDao();
+            payments = paymentDao.queryForAll();
+
+            attendeeEventPaymentDao = databaseHelper.getAttendeeEventPaymentDao();
+            attendeeEventPayments = attendeeEventPaymentDao.queryForAll();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         JSONObject jsonObj = new JSONObject();
         try {
+            //keep the order of this json for dependencies in tables
             jsonObj.put("places", placesToJson(places));
             jsonObj.put("eventTypes", eventTypesToJson(eventTypes));
             jsonObj.put("paymentTypes", paymentTypesToJson(paymentTypes));
+            jsonObj.put("attendeeTypes", attendeeTypesToJson(attendeeTypes));
+            jsonObj.put("attendees", attendeesToJson(attendees));
+            jsonObj.put("events", eventsToJson(events));
+            jsonObj.put("coupons", couponsToJson(coupons));
+            jsonObj.put("payments", paymentsToJson(payments));
+            jsonObj.put("attendeeEventPayments", attendeeEventPaymentToJson(attendeeEventPayments));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -230,5 +270,137 @@ public class JsonUtil {
 
         }
         return jsonPaymentTypesArray;
+    }
+
+    public static JSONArray attendeeTypesToJson (List<AttendeeType> attendeeTypes) {
+        JSONArray jsonAttendeeTypesArray = new JSONArray();
+
+        for(AttendeeType attendeeType : attendeeTypes) {
+            try {
+                JSONObject jsonAttendeeType = new JSONObject();
+                jsonAttendeeType.put("idAttendeeType", attendeeType.getIdAttendeeType());
+                jsonAttendeeType.put("name", attendeeType.getName());
+                jsonAttendeeType.put("description", attendeeType.getDescription());
+
+                jsonAttendeeTypesArray.put(jsonAttendeeType);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        return jsonAttendeeTypesArray;
+    }
+
+    public static JSONArray attendeesToJson (List<Attendee> attendees) {
+        JSONArray jsonAttendeesArray = new JSONArray();
+
+        for(Attendee attendee : attendees) {
+            try {
+                JSONObject jsonAttendee = new JSONObject();
+                jsonAttendee.put("attendeeId", attendee.getAttendeeId());
+                jsonAttendee.put("attendeeType", attendee.getAttendeeType().getIdAttendeeType());
+                jsonAttendee.put("name", attendee.getName());
+                jsonAttendee.put("lastName", attendee.getLastName());
+                jsonAttendee.put("age", attendee.getAge());
+                jsonAttendee.put("cellphoneNumber", attendee.getCellphoneNumber());
+                jsonAttendee.put("facebookProfile", attendee.getFacebookProfile());
+                jsonAttendee.put("email", attendee.getFacebookProfile());
+                jsonAttendee.put("alias", attendee.getAlias());
+                jsonAttendee.put("state", attendee.getState());
+
+                jsonAttendeesArray.put(jsonAttendee);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return jsonAttendeesArray;
+    }
+
+    public static JSONArray eventsToJson (List<Event> events) {
+        JSONArray jsonEventsArray = new JSONArray();
+
+        for(Event event : events) {
+            try {
+                JSONObject jsonEvent = new JSONObject();
+                jsonEvent.put("idEvent", event.getIdEvent());
+                jsonEvent.put("idPlace", event.getPlace().getIdplace());
+                jsonEvent.put("name", event.getName());
+                jsonEvent.put("day", event.getDay());
+                jsonEvent.put("month", event.getMonth());
+                jsonEvent.put("year", event.getYear());
+                jsonEvent.put("hour", event.getHour());
+                jsonEvent.put("minutes", event.getMinutes());
+                jsonEvent.put("paymentAmount", event.getPaymentAmount());
+                jsonEvent.put("state", event.getState());
+
+                jsonEventsArray.put(jsonEvent);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return jsonEventsArray;
+    }
+
+    public static JSONArray couponsToJson (List<Coupon> coupons) {
+        JSONArray jsonCouponsArray = new JSONArray();
+
+        for(Coupon coupon : coupons) {
+            try {
+                JSONObject jsonCoupon = new JSONObject();
+                jsonCoupon.put("idCoupon", coupon.getIdCoupon());
+                jsonCoupon.put("attendee", coupon.getAttendee().getAttendeeId());
+                jsonCoupon.put("number", coupon.getNumber());
+                jsonCoupon.put("description", coupon.getDescription());
+
+                jsonCouponsArray.put(jsonCoupon);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return jsonCouponsArray;
+    }
+
+    public static JSONArray paymentsToJson (List<Payment> payments) {
+        JSONArray jsonPaymentsArray = new JSONArray();
+
+        for(Payment payment : payments) {
+            try {
+                JSONObject jsonPayment = new JSONObject();
+                jsonPayment.put("idPayment", payment.getIdPayment());
+                jsonPayment.put("coupon", payment.getCoupon() != null ? payment.getCoupon().getIdCoupon() : "");
+                jsonPayment.put("paymentType", payment.getPaymentType() != null ? payment.getPaymentType().getIdPaymentType() : "");
+                jsonPayment.put("amount", payment.getAmount());
+
+                jsonPaymentsArray.put(jsonPayment);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return jsonPaymentsArray;
+    }
+
+    public static JSONArray attendeeEventPaymentToJson (List<AttendeeEventPayment> attendeeEventPayments) {
+        JSONArray jsonCouponsArray = new JSONArray();
+
+        for(AttendeeEventPayment attendeeEventPayment : attendeeEventPayments) {
+            try {
+                JSONObject jsonAttendeeEventPayment = new JSONObject();
+                jsonAttendeeEventPayment.put("idAttendeeEventPayment", attendeeEventPayment.getIdAttendeeEventPayment());
+                jsonAttendeeEventPayment.put("event", attendeeEventPayment.getEvent().getIdEvent());
+                jsonAttendeeEventPayment.put("attendee", attendeeEventPayment.getAttendee().getAttendeeId());
+                jsonAttendeeEventPayment.put("payment", attendeeEventPayment.getPayment().getIdPayment());
+
+                jsonCouponsArray.put(jsonAttendeeEventPayment);
+            }
+            catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return jsonCouponsArray;
     }
 }
