@@ -103,7 +103,7 @@ public class JsonUtil {
         return jsonEvents.toString();
     }
 
-    public static ArrayList<Attendee> jsonToMap(String jsonContacts, final Context context) {
+    public static ArrayList<Attendee> attendeesJsonToMap(String jsonContacts, final Context context) {
         Log.i("JsonUtil", "jsonContacts string: " + jsonContacts);
         ArrayList<Attendee> attendeeContacts = new ArrayList<Attendee>();
 
@@ -215,6 +215,7 @@ public class JsonUtil {
             try {
                 // Here we convert Java Object to JSON
                 JSONObject jsonPlace = new JSONObject();
+                jsonPlace.put("idPlace", place.getIdplace());
                 jsonPlace.put("name", place.getName());
                 jsonPlace.put("address", place.getAddress());
                 jsonPlace.put("gpsLocation", place.getGpsLocation());

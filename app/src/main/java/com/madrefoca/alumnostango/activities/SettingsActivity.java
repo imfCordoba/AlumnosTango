@@ -49,6 +49,7 @@ import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.utils.JsonUtil;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
+import com.madrefoca.alumnostango.utils.UtilImportDataFromDrive;
 import com.madrefoca.alumnostango.utils.UtilImportEvents;
 
 import java.io.BufferedReader;
@@ -262,20 +263,11 @@ public class SettingsActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.VISIBLE);
                             progressBar.setProgress(0);
 
-                            UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
-                            utilImportContacts.execute(FROM_GOOGLE_DRIVE);
+                            //UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
+                            //utilImportContacts.execute(FROM_GOOGLE_DRIVE);
 
-                            /*switch (workingTable) {
-                                case "attendees":
-                                    UtilImportContacts utilImportContacts = new UtilImportContacts(getApplicationContext(), progressBar, builder.toString());
-                                    utilImportContacts.execute(FROM_GOOGLE_DRIVE);
-                                    break;
-                                case "event":
-                                    UtilImportEvents utilImportEvents = new UtilImportEvents(getApplicationContext(), progressBar, builder.toString());
-                                    break;
-                                case "all":
-                                    break;
-                            }*/
+                            UtilImportDataFromDrive importDataFromDrive = new UtilImportDataFromDrive(getApplicationContext(), progressBar, builder.toString());
+                            importDataFromDrive.execute();
 
                             showMessage(getString(R.string.content_loaded));
                             //mFileContents.setText(builder.toString());

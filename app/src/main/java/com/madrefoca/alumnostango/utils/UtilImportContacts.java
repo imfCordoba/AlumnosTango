@@ -123,7 +123,7 @@ public class UtilImportContacts extends AsyncTask<String, Integer, String> {
                 }
                 break;
             case FROM_GOOGLE_DRIVE:
-                ArrayList<Attendee> attendeesContacts = JsonUtil.jsonToMap(jsonContacts, context);
+                ArrayList<Attendee> attendeesContacts = JsonUtil.attendeesJsonToMap(jsonContacts, context);
                 int countContacts = 0;
                 for(Attendee attendee: attendeesContacts) {
                     this.saveImportedContact(attendee);
