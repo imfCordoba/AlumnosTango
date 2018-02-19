@@ -22,7 +22,6 @@ import com.madrefoca.alumnostango.model.Place;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by fernando on 18/02/18.
@@ -43,15 +42,15 @@ public class UtilImportDataFromDrive extends AsyncTask<String, Integer, String> 
     Dao<Payment, Integer> paymentDao;
     Dao<AttendeeEventPayment, Integer> attendeeEventPaymentDao;
 
-    List<Place> places = null;
-    List<EventType> eventTypes = null;
-    List<PaymentType> paymentTypes = null;
-    List<AttendeeType> attendeeTypes = null;
-    List<Attendee> attendees = null;
-    List<Event> events = null;
-    List<Coupon> coupons = null;
-    List<Payment> payments = null;
-    List<AttendeeEventPayment> attendeeEventPayments = null;
+    ArrayList<Place> places = null;
+    ArrayList<EventType> eventTypes = null;
+    ArrayList<PaymentType> paymentTypes = null;
+    ArrayList<AttendeeType> attendeeTypes = null;
+    ArrayList<Attendee> attendees = null;
+    ArrayList<Event> events = null;
+    ArrayList<Coupon> coupons = null;
+    ArrayList<Payment> payments = null;
+    ArrayList<AttendeeEventPayment> attendeeEventPayments = null;
 
     ProgressBar progressBar;
     private Context context;
@@ -90,7 +89,13 @@ public class UtilImportDataFromDrive extends AsyncTask<String, Integer, String> 
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
         databaseHelper.clearTables();
 
-        this.saveImportedPlaces(UtilImportJson.placesJsonToMap(this.jsonTables, context));
+        UtilJsonMapper utilJsonMapper = new UtilJsonMapper(this.jsonTables, context);
+
+        this.saveImportedPlaces(utilJsonMapper.placesJsonMapper());
+        this.saveImportedEventTypes(utilJsonMapper.eventTypesJsonMapper());
+        this.savePaymentTypes(utilJsonMapper.paymentTypesMapper());
+        this.saveAttendeeTypes(utilJsonMapper.attendeeTypesMapper());
+        this.saveAttendees(utilJsonMapper.attendeeMapper());
 
     }
 
@@ -108,6 +113,74 @@ public class UtilImportDataFromDrive extends AsyncTask<String, Integer, String> 
                 e.printStackTrace();
             }
             Log.d("UtilImpDataFromDrive: ", "Saved imported place from drive : " + place.getName() + " in database");
+        }
+    }
+
+    private void saveImportedEventTypes(ArrayList<EventType> eventTypeArrayList) {
+        try {
+            eventTypeDao = databaseHelper.getEventTypesDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        for(EventType eventType: eventTypeArrayList) {
+            try {
+                eventTypeDao.create(eventType);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Log.d("UtilImpDataFromDrive: ", "Saved imported event type from drive : " + eventType.getName() + " in database");
+        }
+    }
+
+    private void savePaymentTypes(ArrayList<PaymentType> paymentTypeArrayList) {
+        try {
+            paymentTypeDao = databaseHelper.getPaymentTypesDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        for(PaymentType paymentType: paymentTypeArrayList) {
+            try {
+                paymentTypeDao.create(paymentType);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Log.d("UtilImpDataFromDrive: ", "Saved imported payment type from drive : " + paymentType.getName() + " in database");
+        }
+    }
+
+    private void saveAttendeeTypes(ArrayList<AttendeeType> attendeeTypeArrayList) {
+        try {
+            attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        for(AttendeeType attendeeType: attendeeTypeArrayList) {
+            try {
+                attendeeTypeDao.create(attendeeType);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Log.d("UtilImpDataFromDrive: ", "Saved imported atteendee type from drive : " + attendeeType.getName() + " in database");
+        }
+    }
+
+    private void saveAttendees(ArrayList<Attendee> attendeeTypeArrayList) {
+        try {
+            attendeeDao = databaseHelper.getAttendeeDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        for(Attendee attendee: attendeeTypeArrayList) {
+            try {
+                attendeeDao.create(attendee);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Log.d("UtilImpDataFromDrive: ", "Saved imported atteendee from drive : " + attendee.getAlias() + " in database");
         }
     }
 }
