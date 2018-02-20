@@ -372,9 +372,12 @@ public class JsonUtil {
             try {
                 JSONObject jsonPayment = new JSONObject();
                 jsonPayment.put("idPayment", payment.getIdPayment());
-                jsonPayment.put("coupon", payment.getCoupon() != null ? payment.getCoupon().getIdCoupon() : "");
-                jsonPayment.put("paymentType", payment.getPaymentType() != null ? payment.getPaymentType().getIdPaymentType() : "");
-                jsonPayment.put("amount", payment.getAmount());
+                if(payment.getCoupon() != null)
+                    jsonPayment.put("coupon", payment.getCoupon().getIdCoupon());
+                if(payment.getPaymentType() != null)
+                    jsonPayment.put("paymentType", payment.getPaymentType().getIdPaymentType());
+                if(payment.getAmount() != null)
+                    jsonPayment.put("amount", payment.getAmount());
 
                 jsonPaymentsArray.put(jsonPayment);
             }
