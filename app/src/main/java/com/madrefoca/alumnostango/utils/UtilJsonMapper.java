@@ -260,6 +260,7 @@ public class UtilJsonMapper {
                 coupon.setAttendee(attendeeDao.queryForId(c.getInt("attendee")));
                 coupon.setNumber(c.getString("number"));
                 coupon.setDescription(c.getString("description"));
+                coupon.setState(c.getString("state"));
 
                 couponArrayList.add(coupon);
             }

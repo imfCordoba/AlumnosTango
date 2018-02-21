@@ -355,6 +355,7 @@ public class JsonUtil {
                 jsonCoupon.put("attendee", coupon.getAttendee().getAttendeeId());
                 jsonCoupon.put("number", coupon.getNumber());
                 jsonCoupon.put("description", coupon.getDescription());
+                jsonCoupon.put("state", coupon.getState());
 
                 jsonCouponsArray.put(jsonCoupon);
             }
