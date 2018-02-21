@@ -35,6 +35,19 @@
             android:singleLine="true" />
 
         <EditText
+            android:id="@+id/dialog_attendee_coupon_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="número de cupón"
+            android:inputType="number"
+            android:singleLine="true" />
+
+        <EditText
             android:id="@+id/dialog_attendee_age"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +58,6 @@
             android:ems="10"
             android:hint="edad (opcional)"
             android:inputType="number"
-            android:numeric="integer"
             android:singleLine="true" />
 
         <EditText

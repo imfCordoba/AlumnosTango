@@ -32,10 +32,13 @@ import com.madrefoca.alumnostango.adapters.AttendeesDataAdapter;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeType;
+import com.madrefoca.alumnostango.model.Coupon;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +62,10 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
     @Nullable
     @BindView(R.id.dialog_attendee_lastname)
     EditText attendeeLastName;
+
+    @Nullable
+    @BindView(R.id.dialog_attendee_coupon_number)
+    EditText attendeeCouponNumber;
 
     @Nullable
     @BindView(R.id.dialog_attendee_age)
@@ -95,10 +102,12 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
     private AlertDialog.Builder addEditAttendeeDialog;
     private ArrayAdapter<String> dataAdapter;
     private DatabaseHelper databaseHelper;
+    private String lastCouponNumber;
 
     //daos
     Dao<AttendeeType, Integer> attendeeTypeDao;
     Dao<Attendee, Integer> attendeeDao;
+    Dao<Coupon, Integer> couponDao;
 
     public AttendeesSimpleCallback(int dragDirs, int swipeDirs, Context context,
                                    ArrayList<Attendee> attendeesList, AttendeesDataAdapter attendeesListAdapter,
@@ -114,6 +123,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
         try {
             attendeeTypeDao = databaseHelper.getAttendeeTypeDao();
             attendeeDao = databaseHelper.getAttendeeDao();
+            couponDao = databaseHelper.getCouponsDao();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -213,6 +223,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
         attendeeId.setText(attendeesList.get(position).getAttendeeId().toString());
         attendeeName.setText(attendeesList.get(position).getName());
         attendeeLastName.setText(attendeesList.get(position).getLastName());
+
         if(attendeesList.get(position).getAge() != null)
             attendeeAge.setText(attendeesList.get(position).getAge().toString());
         if(attendeesList.get(position).getCellphoneNumber() != null)
@@ -220,6 +231,24 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
         attendeeFacebook.setText(attendeesList.get(position).getFacebookProfile());
         attendeeEmail.setText(attendeesList.get(position).getEmail());
         attendeeTypesSpinner.setSelection(dataAdapter.getPosition(attendeesList.get(position).getAttendeeType().getName()));
+
+        try {
+            lastCouponNumber = "";
+            //get last coupon number for this attendee in active state
+            Attendee attendee = attendeeDao.queryForId(attendeesList.get(position).getAttendeeId());
+
+            Map matchingFields = new HashMap();
+            matchingFields.put("idAttendee", attendee);
+            matchingFields.put("state", "active");
+
+            List<Coupon> lastCouponList = couponDao.queryForFieldValues(matchingFields);
+            if(lastCouponList.size() != 0) {
+                lastCouponNumber = lastCouponList.get(0).getNumber();
+                attendeeCouponNumber.setText(lastCouponNumber);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         addEditAttendeeDialog.show();
     }
@@ -255,7 +284,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                 Attendee attendee = null;
 
                 try {
-                    if(add){
+                    if(add) {
                         add =false;
 
                         //getting data from dialog
@@ -274,6 +303,18 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
 
                         attendeeDao.create(attendee);
                         Log.d("AttendeeFragment: ", "Saved attendee: " + attendee.getName() +" "+ attendee.getLastName());
+
+                        if(!attendeeCouponNumber.getText().toString().trim().isEmpty()) {
+                            Coupon coupon = new Coupon();
+                            coupon.setAttendee(attendee);
+                            coupon.setNumber(attendeeCouponNumber.getText().toString().trim());
+                            coupon.setState("active");
+
+                            couponDao.create(coupon);
+
+                            Log.d("AttendeeFragment: ", "Saved coupon: " + coupon.getNumber() +
+                                    " for attendee"+ attendee.getAlias());
+                        }
                     }else{
                         attendee = attendeeDao.queryForId(Integer.parseInt(attendeeId.getText().toString()));
                         attendee.setName(attendeeName.getText().toString());
@@ -289,6 +330,28 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
 
                         attendeeDao.update(attendee);
                         Log.d("AttendeeFragment: ", "Updated attendee: " + attendee.getName() +" "+ attendee.getLastName());
+
+                        if(!lastCouponNumber.equals(attendeeCouponNumber.getText().toString().trim())) {
+
+                            //change state last coupon used for this attendee to inactive
+                            List<Coupon> lastCouponList = couponDao.queryForEq("number", lastCouponNumber);
+
+                            if(lastCouponList.size() != 0) {
+                                Coupon lastCoupon = lastCouponList.get(0);
+                                lastCoupon.setState("inactive");
+                                couponDao.update(lastCoupon);
+                                Log.d("AttendeeFragment: ", "Coupon set to inactive state: " + lastCoupon.getNumber());
+                            }
+
+                            //create and link new coupon
+                            Coupon newCoupon = new Coupon();
+                            newCoupon.setAttendee(attendee);
+                            newCoupon.setNumber(attendeeCouponNumber.getText().toString().trim());
+                            newCoupon.setState("active");
+                            couponDao.create(newCoupon);
+                            Log.d("AttendeeFragment: ", "Saved coupon: " + newCoupon.getNumber() +
+                                    " for attendee"+ attendee.getAlias());
+                        }
                     }
 
                 } catch (SQLException e) {

@@ -258,7 +258,7 @@ public class UtilJsonMapper {
                 Coupon coupon = new Coupon();
                 coupon.setIdCoupon(c.getInt("idCoupon"));
                 coupon.setAttendee(attendeeDao.queryForId(c.getInt("attendee")));
-                coupon.setNumber(c.getLong("number"));
+                coupon.setNumber(c.getString("number"));
                 coupon.setDescription(c.getString("description"));
 
                 couponArrayList.add(coupon);

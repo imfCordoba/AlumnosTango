@@ -236,13 +236,13 @@ public class CouponsFragment extends Fragment {
 
                         //getting data from dialog
                         coupon = new Coupon();
-                        coupon.setNumber(Long.parseLong(couponNumber.getText().toString()));
+                        coupon.setNumber(couponNumber.getText().toString());
                         coupon.setAttendee(attendee);
                         couponDao.create(coupon);
                         Log.d("CouponsFragment: ", "Saved coupon: " + coupon.getNumber());
                     }else{
                         coupon = couponDao.queryForId(Integer.parseInt(couponId.getText().toString()));
-                        coupon.setNumber(Long.parseLong(couponNumber.getText().toString()));
+                        coupon.setNumber(couponNumber.getText().toString());
                         coupon.setAttendee(attendee);
                         couponDao.update(coupon);
                         Log.d("CouponsFragment: ", "Updated coupon: " + coupon.getNumber());

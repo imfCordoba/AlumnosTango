@@ -16,10 +16,13 @@ public class Coupon {
     private Attendee attendee;
 
     @DatabaseField
-    private Long number;
+    private String number;
 
     @DatabaseField
     private String description;
+
+    @DatabaseField
+    private String state;
 
     public Coupon() {
     }
@@ -45,11 +48,11 @@ public class Coupon {
         this.attendee = attendee;
     }
 
-    public Long getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(Long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
@@ -59,5 +62,13 @@ public class Coupon {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }
