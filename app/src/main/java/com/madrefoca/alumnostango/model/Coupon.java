@@ -19,6 +19,9 @@ public class Coupon {
     private String number;
 
     @DatabaseField
+    private Integer remainingClasses;
+
+    @DatabaseField
     private String description;
 
     @DatabaseField
@@ -54,6 +57,14 @@ public class Coupon {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public Integer getRemainingClasses() {
+        return remainingClasses;
+    }
+
+    public void setRemainingClasses(Integer remainingClasses) {
+        this.remainingClasses = remainingClasses;
     }
 
     public String getDescription() {

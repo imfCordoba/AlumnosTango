@@ -68,6 +68,10 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
     EditText attendeeCouponNumber;
 
     @Nullable
+    @BindView(R.id.dialog_attendee_coupon_classes)
+    EditText attendeeCouponRemainingClasses;
+
+    @Nullable
     @BindView(R.id.dialog_attendee_age)
     EditText attendeeAge;
 
@@ -103,6 +107,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
     private ArrayAdapter<String> dataAdapter;
     private DatabaseHelper databaseHelper;
     private String lastCouponNumber;
+    private Integer lastCouponClasses;
 
     //daos
     Dao<AttendeeType, Integer> attendeeTypeDao;
@@ -234,6 +239,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
 
         try {
             lastCouponNumber = "";
+            lastCouponClasses = 0;
             //get last coupon number for this attendee in active state
             Attendee attendee = attendeeDao.queryForId(attendeesList.get(position).getAttendeeId());
 
@@ -244,7 +250,11 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
             List<Coupon> lastCouponList = couponDao.queryForFieldValues(matchingFields);
             if(lastCouponList.size() != 0) {
                 lastCouponNumber = lastCouponList.get(0).getNumber();
+                lastCouponClasses = lastCouponList.get(0).getRemainingClasses() != null ?
+                        lastCouponList.get(0).getRemainingClasses() : 0;
                 attendeeCouponNumber.setText(lastCouponNumber);
+                attendeeCouponRemainingClasses.setText(lastCouponList.get(0).getRemainingClasses() != null ?
+                        lastCouponList.get(0).getRemainingClasses().toString() : "0");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -308,6 +318,7 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                             Coupon coupon = new Coupon();
                             coupon.setAttendee(attendee);
                             coupon.setNumber(attendeeCouponNumber.getText().toString().trim());
+                            coupon.setRemainingClasses(Integer.valueOf(attendeeCouponRemainingClasses.getText().toString().trim()));
                             coupon.setState("active");
 
                             couponDao.create(coupon);
@@ -347,10 +358,22 @@ public class AttendeesSimpleCallback extends ItemTouchHelper.SimpleCallback {
                             Coupon newCoupon = new Coupon();
                             newCoupon.setAttendee(attendee);
                             newCoupon.setNumber(attendeeCouponNumber.getText().toString().trim());
+                            newCoupon.setRemainingClasses(Integer.valueOf(attendeeCouponRemainingClasses.getText().toString()));
                             newCoupon.setState("active");
                             couponDao.create(newCoupon);
                             Log.d("AttendeeFragment: ", "Saved coupon: " + newCoupon.getNumber() +
                                     " for attendee"+ attendee.getAlias());
+                        } else {
+                            if(!lastCouponClasses.equals(Integer.valueOf(attendeeCouponRemainingClasses.getText().toString().trim()))) {
+                                List<Coupon> lastCouponList = couponDao.queryForEq("number", lastCouponNumber);
+
+                                if(lastCouponList.size() != 0) {
+                                    Coupon lastCoupon = lastCouponList.get(0);
+                                    lastCoupon.setRemainingClasses(Integer.valueOf(attendeeCouponRemainingClasses.getText().toString().trim()));
+                                    couponDao.update(lastCoupon);
+                                    Log.d("AttendeeFragment: ", "Coupon remaining classes updated: " + lastCoupon.getNumber());
+                                }
+                            }
                         }
                     }
 
