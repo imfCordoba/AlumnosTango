@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.madrefoca.alumnostango.R;
 import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.AttendeeEventPayment;
+import com.madrefoca.alumnostango.model.Coupon;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.model.Payment;
 
@@ -72,6 +74,12 @@ public class AttendeeEventPaymentFragment extends Fragment {
     @BindView(R.id.fabSavePayment)
     FloatingActionButton fabSavePayment;
 
+    @Nullable
+    @BindView(R.id.switchHasCoupon)
+    Switch switchHasCoupon;
+
+
+
     private ArrayAdapter<String> attendeesListAdapter;
     private List attendeesArrayList= new ArrayList();
 
@@ -79,12 +87,14 @@ public class AttendeeEventPaymentFragment extends Fragment {
     private Dao<AttendeeEventPayment, Integer> attendeeEventPaymentDao;
     private Dao<Payment, Integer> paymentsDao;
     private Dao<Event, Integer> eventsDao;
+    private Dao<Coupon, Integer> couponDao;
 
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
     private DatabaseHelper databaseHelper = null;
     private Bundle bundle;
-    Event event = null;
+    private Event event = null;
+    private Attendee attendee = null;
     List<Attendee> attendeeList = null;
     View thisFragment;
 
@@ -110,6 +120,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
             attendeeEventPaymentDao = databaseHelper.getAttendeeEventPaymentDao();
             paymentsDao = databaseHelper.getPaymentsDao();
             eventsDao = databaseHelper.getEventsDao();
+            couponDao = databaseHelper.getCouponsDao();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -144,7 +155,26 @@ public class AttendeeEventPaymentFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String name = attendeeListView.getItemAtPosition(i).toString();
                 textAttendeeSelected.setText(name);
-                textViewAmount.setText(event.getPaymentAmount() != null? event.getPaymentAmount().toString() : "150");
+
+                //check if the attendee has coupon
+                try {
+                    attendee = attendeesDao.queryForEq("alias", textAttendeeSelected.getText().toString()).get(0);
+
+                    Map matchingFields = new HashMap();
+                    matchingFields.put("idAttendee", attendee);
+                    matchingFields.put("state", "active");
+
+                    List<Coupon> lastCouponList = couponDao.queryForFieldValues(matchingFields);
+                    if(lastCouponList.size() != 0) {
+                        switchHasCoupon.setChecked(true);
+                        textViewAmount.setText("100");
+                    }else{
+                        textViewAmount.setText(event.getPaymentAmount() != null? event.getPaymentAmount().toString() : "150");
+                    }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 /*Snackbar snackbar = Snackbar.make(getView(), "Alumno: " + name + " clickeado!",
                         Snackbar.LENGTH_LONG);
@@ -246,7 +276,17 @@ public class AttendeeEventPaymentFragment extends Fragment {
         } else {
             try {
                 Attendee attendee = attendeesDao.queryForEq("alias", textAttendeeSelected.getText().toString()).get(0);
+
                 Payment payment = new Payment();
+
+                if(switchHasCoupon.isChecked()) {
+                    Map matchingFieldsCoupon = new HashMap();
+                    matchingFieldsCoupon.put("idAttendee", attendee);
+                    matchingFieldsCoupon.put("state", "active");
+
+                    List<Coupon> couponList = couponDao.queryForFieldValues(matchingFieldsCoupon);
+                    payment.setCoupon( couponList.get(0));
+                }
                 payment.setAmount(Double.valueOf(textViewAmount.getText().toString()));
                 paymentsDao.create(payment);
 
@@ -271,6 +311,7 @@ public class AttendeeEventPaymentFragment extends Fragment {
 
                 this.loadAttendees(thisFragment);
                 attendeesListAdapter.notifyDataSetChanged();
+                switchHasCoupon.setChecked(false);
 
             } catch (SQLException e) {
                 Log.d("attEvPayFragment: ", "No se pudo guardar el pago!");
