@@ -68,6 +68,14 @@ public class EventAccountsFragment extends Fragment {
     @BindView(R.id.total_cash)
     EditText totalCash;
 
+    @Nullable
+    @BindView(R.id.total_coupons)
+    EditText totalCoupons;
+
+    @Nullable
+    @BindView(R.id.total_final)
+    EditText totalFinal;
+
     EventAccountsAdapter eventAccountsAdapter;
 
 
@@ -141,8 +149,7 @@ public class EventAccountsFragment extends Fragment {
         eventAccountsRecyclerView.setLayoutManager(new LinearLayoutManager(thisFragment.getContext()));
         eventAccountsAdapter = new EventAccountsAdapter(attendeePaymentRowArrayList);
         eventAccountsRecyclerView.setAdapter(eventAccountsAdapter);
-
-        this.calculateTotalCash();
+        this.calculateTotal();
     }
 
     private void initSwipe(View thisFragment) {
@@ -154,12 +161,23 @@ public class EventAccountsFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(eventAccountsRecyclerView);
     }
 
-    private void calculateTotalCash() {
+    private void calculateTotal() {
         Double partialTotalCash = 0.0;
+        Double partialTotalCoupons = 0.0;
+        Double finalTotal = 0.0;
+
         for(AttendeePaymentRow attendeePaymentRow : attendeePaymentRowArrayList) {
-            partialTotalCash+= attendeePaymentRow.getPayment().getAmount();
+            if (attendeePaymentRow.getPayment().getCoupon() == null) {
+                partialTotalCash += attendeePaymentRow.getPayment().getAmount();
+            } else {
+                partialTotalCoupons += attendeePaymentRow.getPayment().getAmount();
+            }
+
+            finalTotal += attendeePaymentRow.getPayment().getAmount();
         }
         totalCash.setText(partialTotalCash.toString());
+        totalCoupons.setText(partialTotalCoupons.toString());
+        totalFinal.setText(finalTotal.toString());
     }
 
     @Optional
