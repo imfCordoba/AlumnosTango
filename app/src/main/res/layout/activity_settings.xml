@@ -20,27 +20,6 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/exportDbButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Exportar datos a google drive"
-            android:theme="@style/PrimaryButton" />
-
-        <Button
-            android:id="@+id/exportEventsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guardar eventos en google drive"
-            android:theme="@style/PrimaryButton" />
-
-        <Button
-            android:id="@+id/importDbButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Importar todo de google drive"
-            android:theme="@style/PrimaryButton" />
-
-        <Button
             android:id="@+id/importContactsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,10 +27,17 @@
             android:theme="@style/PrimaryButton" />
 
         <Button
+            android:id="@+id/importDbButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Importar todo desde Google drive"
+            android:theme="@style/PrimaryButton" />
+
+        <Button
             android:id="@+id/saveAllInDriveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Guardar todo en drive"
+            android:text="Guardar todo en Google drive"
             android:theme="@style/PrimaryButton" />
 
     </LinearLayout>

@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">Mis Alumnos</string>
+    <string name="app_name">Alumnos pagos</string>
+
+    <string name="ok">OK</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -78,4 +80,7 @@
     <string name="file_name_events">mis-eventos</string>
     <string name="file_name_all">full-backup</string>
 
+    <string name="permission_contacts">Permiso para leer los contactos para relacionarlos con los pagos.</string>
+    <string name="permissions_available_contacts">Se han otorgado los permisos para leer los contactos.</string>
+    <string name="permissions_not_granted">PNo se han otorgado los permisos para leer los contactos.</string>
 </resources>

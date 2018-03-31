@@ -48,9 +48,9 @@ import com.madrefoca.alumnostango.helpers.DatabaseHelper;
 import com.madrefoca.alumnostango.model.Attendee;
 import com.madrefoca.alumnostango.model.Event;
 import com.madrefoca.alumnostango.utils.JsonUtil;
+import com.madrefoca.alumnostango.utils.PermissionUtil;
 import com.madrefoca.alumnostango.utils.UtilImportContacts;
 import com.madrefoca.alumnostango.utils.UtilImportDataFromDrive;
-import com.madrefoca.alumnostango.utils.UtilImportEvents;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,9 +66,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
-public class SettingsActivity extends AppCompatActivity {
-
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+public class SettingsActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     @Nullable
     @BindView(R.id.exportDbButton)
@@ -94,6 +92,11 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final String FROM_PHONE = "phone";
     private static final String FROM_GOOGLE_DRIVE = "drive";
+    private static String[] PERMISSIONS_CONTACT = {Manifest.permission.READ_CONTACTS};
+    /**
+     * Id to identify a contacts permission request.
+     */
+    private static final int REQUEST_CONTACTS = 3;
 
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
@@ -109,13 +112,6 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         signIn();
-
-        int hasReadContactsPermission = ActivityCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_CONTACTS);
-        if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_CONTACTS},
-                    REQUEST_CODE_ASK_PERMISSIONS);
-        }
     }
 
     @Override
@@ -162,7 +158,6 @@ public class SettingsActivity extends AppCompatActivity {
                 if (getAccountTask.isSuccessful()) {
                     initializeDriveClient();
                 } else {
-                    Log.e(TAG, "Sign-in failed.");
                     Log.e(TAG, "Sign-in failed.");
                     Toast.makeText(getApplicationContext(),
                             "Sign-in failed.",
@@ -449,6 +444,53 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Requests the Contacts permissions.
+     * If the permission has been denied previously, a SnackBar will prompt the user to grant the
+     * permission, otherwise it is requested directly.
+     */
+    private void requestContactsPermissions() {
+        // BEGIN_INCLUDE(contacts_permission_request)
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.READ_CONTACTS)) {
+
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example, if the request has been denied previously.
+            Log.i(TAG,
+                    "Displaying contacts permission rationale to provide additional context.");
+        } else {
+            // Contact permissions have not been granted yet. Request them directly.
+            ActivityCompat.requestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
+        }
+        // END_INCLUDE(contacts_permission_request)
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_CONTACTS) {
+            Log.i(TAG, "Received response for contact permissions request.");
+
+            // We have requested multiple permissions for contacts, so all of them need to be
+            // checked.
+            if (PermissionUtil.verifyPermissions(grantResults)) {
+                filterContactsDialog.show();
+            } else {
+                Log.i(TAG, "Contacts permissions were NOT granted.");
+            }
+
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+
     @Optional
     @OnClick(R.id.exportDbButton)
     public void onClickExportDatabase() {
@@ -460,17 +502,6 @@ public class SettingsActivity extends AppCompatActivity {
         //createJsonFolder();
         workingTable = "attendees";
         fileName = getString(R.string.file_name_attendees);
-        saveFileToDrive();
-
-        Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
-    }
-
-    @Optional
-    @OnClick(R.id.exportEventsButton)
-    public void onClickExportEventsButton() {
-        this.initializeDriveClient();
-        workingTable = "events";
-        fileName = getString(R.string.file_name_events);
         saveFileToDrive();
 
         Log.d("Database path: ",databaseHelper.getReadableDatabase().getPath());
@@ -491,7 +522,22 @@ public class SettingsActivity extends AppCompatActivity {
     @OnClick(R.id.importContactsButton)
     public void onClickImportContactsButton() {
         this.removeView();
-        filterContactsDialog.show();
+
+        Log.i(TAG, "Show contacts button pressed. Checking permissions.");
+
+        // Verify that all required contact permissions have been granted.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Contacts permissions have not been granted.
+            Log.i(TAG, "Contact permissions has NOT been granted. Requesting permissions.");
+            requestContactsPermissions();
+
+        } else {
+
+            // Contact permissions have been granted. Show the contacts fragment.
+            Log.i(TAG,
+                    "Contact permissions have already been granted.");
+        }
     }
 
     @Optional

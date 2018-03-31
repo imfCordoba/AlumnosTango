@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.madrefoca.alumnostango">
 
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- The following permissions are only requested if the device is on M or above.
+     On older platforms these permissions are not requested and will not be available. -->
+    <uses-permission-sdk-23 android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
